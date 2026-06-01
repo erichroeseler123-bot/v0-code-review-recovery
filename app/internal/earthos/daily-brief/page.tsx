@@ -15,6 +15,7 @@ import { DecisionHero } from "@/components/dcc/decision-hero"
 import { DecisionExplanation } from "@/components/dcc/decision-explanation"
 import { DccNetworkBadge } from "@/components/dcc/dcc-network-badge"
 import { buildDailyBrief } from "@/lib/dcc/earthos/dailyBrief"
+import { DAILY_BRIEF_SNAPSHOT_ENDPOINT } from "@/lib/dcc/earthos/dailyBriefSnapshot"
 import { BriefSection } from "./components/brief-section"
 
 export const metadata: Metadata = {
@@ -106,6 +107,32 @@ export default function DailyBriefPage() {
           <BriefSection key={section.id} section={section} />
         ))}
       </div>
+
+      {/* JSON endpoint reference (Phase 12) */}
+      <section
+        aria-label="JSON snapshot endpoint"
+        className="rounded-xl border border-border bg-card p-6 text-card-foreground"
+      >
+        <h2 className="text-lg font-semibold tracking-tight text-foreground">Read-only JSON snapshot</h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          The same brief is available as a read-only JSON artifact (scheduler job{" "}
+          <span className="font-mono text-foreground">daily_brief_snapshot</span>). GET only — it computes from
+          existing state and returns; it never persists, sends, calls an external API, or touches protected
+          surfaces.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <code className="rounded-md border border-border bg-muted px-3 py-2 font-mono text-xs text-foreground">
+            GET {DAILY_BRIEF_SNAPSHOT_ENDPOINT}
+          </code>
+          <a
+            href={DAILY_BRIEF_SNAPSHOT_ENDPOINT}
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary underline-offset-4 hover:underline"
+          >
+            Open JSON
+            <ArrowRight className="size-3.5" aria-hidden="true" />
+          </a>
+        </div>
+      </section>
 
       {/* Future-cron note */}
       <section className="flex items-start gap-3 rounded-xl border border-dashed border-border bg-muted/40 p-5 text-sm leading-relaxed text-muted-foreground">
