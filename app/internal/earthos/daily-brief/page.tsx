@@ -18,6 +18,7 @@ import { buildDailyBrief } from "@/lib/dcc/earthos/dailyBrief"
 import { buildDailyBriefSnapshot, DAILY_BRIEF_SNAPSHOT_ENDPOINT } from "@/lib/dcc/earthos/dailyBriefSnapshot"
 import { BriefSection } from "./components/brief-section"
 import { SnapshotExportPanel } from "./components/snapshot-export-panel"
+import { ReviewChecklist } from "./components/review-checklist"
 
 export const metadata: Metadata = {
   title: "Earth OS — Daily Brief (Cron Preview)",
@@ -123,6 +124,9 @@ export default function DailyBriefPage() {
         mode={snapshot.mode}
         date={snapshot.date}
       />
+
+      {/* Reviewer checklist (Phase 13A.2) — local-only, no persistence */}
+      <ReviewChecklist />
 
       {/* Future-cron note */}
       <section className="flex items-start gap-3 rounded-xl border border-dashed border-border bg-muted/40 p-5 text-sm leading-relaxed text-muted-foreground">
