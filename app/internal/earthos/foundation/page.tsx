@@ -5,6 +5,12 @@ import { DCC_EVENTS } from "@/lib/dcc/telemetry/events"
 import { classifyExternalLink, type LinkPolicy } from "@/lib/dcc/links/linkPolicy"
 import { EXAMPLE_ROUTE_RECORD, isPromotable } from "@/lib/dcc/earthos/routeRecord"
 import { Section, Card, Tag, FieldList, Pills } from "./components/proof-ui"
+import { DecisionHero } from "@/components/dcc/decision-hero"
+import { DecisionExplanation } from "@/components/dcc/decision-explanation"
+import { FitNotFitCards } from "@/components/dcc/fit-not-fit-cards"
+import { WhatHappensNext } from "@/components/dcc/what-happens-next"
+import { DccNetworkBadge } from "@/components/dcc/dcc-network-badge"
+import { TrackedHandoffLink } from "@/components/dcc/tracked-handoff-link"
 
 /**
  * INTERNAL-ONLY proof surface for the DCC / Earth OS foundation primitives.
@@ -72,9 +78,10 @@ export default function FoundationProofPage() {
           DCC / Earth OS — Foundation Proof
         </h1>
         <p className="mt-2 max-w-2xl text-pretty text-sm leading-relaxed text-muted-foreground">
-          Phase 2 proof surface. Renders the Phase 1 primitives working together — the network registry,
-          shared decision problems, link policy, telemetry taxonomy, and an Earth OS route record. No
-          database, no API calls, not linked from public navigation.
+          Internal proof surface. Renders the Phase 1 primitives (network registry, shared decision
+          problems, link policy, telemetry taxonomy, Earth OS route record) plus the Phase 3 shared design
+          components and the Phase 4 tracked-handoff link composed into one decision surface. No database,
+          no external API calls, not linked from public navigation.
         </p>
       </header>
 
@@ -198,6 +205,81 @@ export default function FoundationProofPage() {
               : `Not promotable: status is "${record.status}", measured=${record.telemetryEvents.length > 0}, but ${record.issues.length} open issue(s) block promotion until resolved.`}
           </p>
         </Card>
+      </Section>
+
+      {/* 6. Phase 3 + 4 — shared components composed into a decision surface */}
+      <Section
+        index={6}
+        title="Decision surface (Phase 3 + 4)"
+        subtitle="Shared design components + a tracked handoff, composed for the Dells group-food corridor (Feastly)."
+      >
+        <div className="rounded-xl border border-border bg-background p-6">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <Tag tone="ok">satellite: feastly-spread</Tag>
+            <Tag>corridor: dells-large-group-food</Tag>
+            <Tag tone="accent">problem: groupMealProblem</Tag>
+          </div>
+
+          <DecisionHero
+            eyebrow="Wisconsin Dells group trip"
+            title="Feed the whole vacation house without splitting the group."
+            description="For large Dells rentals, the hard part is not finding food. It is feeding everyone at the same time without cooking, driving, or coordinating 25 separate orders."
+            primaryCta={{ label: "Plan group dinner", href: "#plan" }}
+            secondaryCta={{ label: "See sample menus", href: "#menus" }}
+          />
+
+          <div className="mt-8 grid gap-6">
+            <FitNotFitCards
+              bestFor={[
+                "Vacation rentals with 15+ guests staying together",
+                "Groups that want one fixed meal time, not 25 orders",
+                "Hosts who do not want to cook or clean up",
+              ]}
+              notFor={[
+                "Small groups that can easily get a restaurant table",
+                "Travelers who have not confirmed a delivery window yet",
+              ]}
+            />
+
+            <DecisionExplanation
+              reasons={[
+                "Your group is staying together in a vacation rental.",
+                "Restaurants create coordination problems for groups over 15.",
+                "A fixed meal package solves timing, quantity, and cleanup anxiety.",
+              ]}
+              watchOutFor={[
+                "Confirm the delivery window before planning the rest of the night.",
+                "Large groups should not wait until everyone is hungry to decide.",
+              ]}
+              nextStep="Choose a fixed dinner package or request a quote."
+            />
+
+            <WhatHappensNext
+              steps={[
+                { title: "Tell us the house and headcount", body: "Share your rental, group size, and the night you need to eat." },
+                { title: "We confirm package and delivery window", body: "You get a fixed price and a delivery time before you commit." },
+                { title: "The house is fed", body: "Food arrives ready to serve — no cooking, driving, or cleanup." },
+              ]}
+            />
+
+            <div className="flex flex-wrap items-center gap-3 border-t border-border pt-5">
+              <TrackedHandoffLink
+                href="#request-quote"
+                label="Request a group dinner quote"
+                sourceRoute="/internal/earthos/foundation"
+                satelliteId="feastly-spread"
+                corridorId="dells-large-group-food"
+                destinationType="manual_quote"
+                intent="dells-large-group-meal"
+              />
+              <span className="text-xs text-muted-foreground">
+                Emits <code className="font-mono text-foreground">lead_captured</code> (tracked_handoff), fails safely.
+              </span>
+            </div>
+
+            <DccNetworkBadge variant="footer" satelliteName="Feastly Spread" />
+          </div>
+        </div>
       </Section>
     </main>
   )
