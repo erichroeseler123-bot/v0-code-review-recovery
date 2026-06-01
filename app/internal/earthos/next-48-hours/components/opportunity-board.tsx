@@ -10,11 +10,11 @@
 
 import { useMemo, useState } from "react"
 import {
-  MOCK_OPPORTUNITIES,
   filterOpportunities,
   REGION_OPTIONS,
   INTENT_OPTIONS,
   TIME_OPTIONS,
+  type Opportunity,
   type OpportunityRegion,
   type OpportunityIntent,
   type OpportunityTimeBucket,
@@ -71,14 +71,14 @@ function FilterRow<T extends string>({
   )
 }
 
-export function OpportunityBoard() {
+export function OpportunityBoard({ opportunities }: { opportunities: Opportunity[] }) {
   const [region, setRegion] = useState<RegionFilter>("all")
   const [intent, setIntent] = useState<IntentFilter>("all")
   const [time, setTime] = useState<TimeFilter>("next-48-hours")
 
   const results = useMemo(
-    () => filterOpportunities(MOCK_OPPORTUNITIES, region, intent, time),
-    [region, intent, time],
+    () => filterOpportunities(opportunities, region, intent, time),
+    [opportunities, region, intent, time],
   )
 
   return (
@@ -91,7 +91,7 @@ export function OpportunityBoard() {
 
       <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
         Showing <span className="font-semibold text-foreground">{results.length}</span> of{" "}
-        {MOCK_OPPORTUNITIES.length} mock opportunities.
+        {opportunities.length} opportunities.
       </p>
 
       {results.length > 0 ? (

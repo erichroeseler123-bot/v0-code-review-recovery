@@ -44,6 +44,16 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
           <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
             {o.intent}
           </span>
+          {o.live ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
+              <span className="size-1.5 rounded-full bg-primary-foreground" aria-hidden="true" />
+              LIVE
+            </span>
+          ) : (
+            <span className="rounded-full border border-border px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+              MOCK
+            </span>
+          )}
           {o.protected && (
             <span className="inline-flex items-center gap-1 rounded-full border border-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
               <ShieldCheck className="size-3" aria-hidden="true" />

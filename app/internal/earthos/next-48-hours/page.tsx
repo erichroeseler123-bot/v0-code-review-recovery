@@ -13,20 +13,41 @@ import { Info } from "lucide-react"
 import { DecisionHero } from "@/components/dcc/decision-hero"
 import { DccNetworkBadge } from "@/components/dcc/dcc-network-badge"
 import { MOCK_OPPORTUNITIES } from "@/lib/dcc/earthos/mockOpportunities"
+import { fetchTicketmasterOpportunities } from "@/lib/dcc/feeds/ticketmaster"
 import { OpportunityBoard } from "./components/opportunity-board"
+import { TicketmasterDiagnosticsPanel } from "./components/diagnostics-panel"
 
 export const metadata: Metadata = {
   title: "Next 48 Hours — DCC / Earth OS (internal prototype)",
-  description: "Internal place-and-time decision prototype. Mock data only.",
+  description: "Internal place-and-time decision prototype. Mock + optional live data.",
   robots: { index: false, follow: false, nocache: true },
 }
 
-export default function Next48HoursPage() {
+// Always render fresh diagnostics for this internal prototype.
+export const dynamic = "force-dynamic"
+
+export default async function Next48HoursPage() {
+  // Phase 6A: attempt a live Ticketmaster pull around the Somerset / Mystic Lake
+  // corridor. With no API key this returns [] and the page stays mock-only.
+  const { opportunities: liveOpportunities, diagnostics } = await fetchTicketmasterOpportunities({
+    latlong: "45.1247,-92.6629", // Somerset, WI area
+    radius: 60,
+    unit: "miles",
+    size: 8,
+    satelliteId: "somerset-st-croix",
+    satelliteName: "Somerset / St. Croix corridor",
+    corridorId: "somerset-mystic-lake-concert",
+    region: "Wisconsin",
+  })
+
+  // Live rows first so they are visible, then the mock network rows.
+  const allOpportunities = [...liveOpportunities, ...MOCK_OPPORTUNITIES]
+
   return (
     <main className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-12">
       <div className="flex flex-col gap-2">
         <span className="inline-flex w-fit items-center gap-2 rounded-full border border-destructive bg-background px-3 py-1 text-xs font-semibold text-destructive">
-          INTERNAL · NOINDEX · MOCK DATA
+          INTERNAL · NOINDEX · {diagnostics.fallbackMode === "mock+live" ? "MOCK + LIVE" : "MOCK DATA"}
         </span>
         <span className="text-xs text-muted-foreground">/internal/earthos/next-48-hours</span>
       </div>
@@ -41,24 +62,34 @@ export default function Next48HoursPage() {
       <section className="flex gap-4 rounded-xl border border-border bg-card p-6 text-card-foreground">
         <Info className="size-5 shrink-0 text-primary" aria-hidden="true" />
         <div className="flex flex-col gap-2 text-sm leading-relaxed text-muted-foreground">
-          <p className="font-medium text-foreground">This is a prototype, not a live feed.</p>
-          <p>
-            All {MOCK_OPPORTUNITIES.length} opportunities below are hand-authored mock data normalized onto the
-            shared DCC schema. They span the whole network — Wisconsin, Alaska, Colorado, and New Orleans — across
-            concerts, tours, food, rides, cabin drops, and cruise shore excursions.
+          <p className="font-medium text-foreground">
+            {diagnostics.fallbackMode === "mock+live"
+              ? "Mock network rows plus live Ticketmaster events."
+              : "Prototype running on mock data (no live feed active)."}
           </p>
           <p>
-            API ingestion comes later (Phase 6+): Ticketmaster / SeatGeek for events, FareHarbor and Viator for
-            tours, Rezdy for rides, plus Google Places and weather for location and risk context. The Party at Red
-            Rocks card is shown as <span className="font-medium text-foreground">protected proven execution</span> —
-            reference only, with no checkout link and no PARR code touched.
+            {MOCK_OPPORTUNITIES.length} hand-authored mock opportunities are normalized onto the shared DCC schema and
+            span the whole network — Wisconsin, Alaska, Colorado, and New Orleans — across concerts, tours, food,
+            rides, cabin drops, and cruise shore excursions. Phase 6A adds the first real feed:{" "}
+            <span className="font-medium text-foreground">Ticketmaster events</span>, normalized into the same schema
+            and merged in when an API key is present. Rows are labeled{" "}
+            <span className="font-medium text-foreground">LIVE</span> or{" "}
+            <span className="font-medium text-foreground">MOCK</span> so the two are never confused.
+          </p>
+          <p>
+            Still to come: SeatGeek, FareHarbor and Viator for tours, Rezdy for rides, plus Google Places and weather
+            for location and risk context. The Party at Red Rocks card is shown as{" "}
+            <span className="font-medium text-foreground">protected proven execution</span> — reference only, with no
+            checkout link and no PARR code touched.
           </p>
         </div>
       </section>
 
+      <TicketmasterDiagnosticsPanel diagnostics={diagnostics} mockCount={MOCK_OPPORTUNITIES.length} />
+
       <section id="opportunities" className="scroll-mt-8 flex flex-col gap-6">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">Opportunities near you</h2>
-        <OpportunityBoard />
+        <OpportunityBoard opportunities={allOpportunities} />
       </section>
 
       <DccNetworkBadge variant="footer" satelliteName="Earth OS · place-and-time decision engine (prototype)" />

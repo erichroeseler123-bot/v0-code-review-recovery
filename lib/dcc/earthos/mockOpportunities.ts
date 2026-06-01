@@ -38,6 +38,8 @@ export type Opportunity = {
   dataSource: DataSource
   /** How this row is currently sourced, e.g. "Mock", "FareHarbor (future)". */
   sourceLabel: string
+  /** True when this row came from a live API feed (Phase 6+), false/absent for mock rows. */
+  live?: boolean
   satelliteId: string
   satelliteName: string
   corridorId: string
