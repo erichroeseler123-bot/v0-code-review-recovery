@@ -6,6 +6,7 @@ import { Hero } from "@/components/hero"
 import { TrustBar } from "@/components/trust-bar"
 import { PortsSection } from "@/components/ports-section"
 import { TourCard } from "@/components/tour-card"
+import { NearMe } from "@/components/near-me"
 
 export async function generateMetadata({
   params,
@@ -58,6 +59,22 @@ export default async function MarketHome({
             ))}
           </div>
         )}
+      </section>
+
+      <section className="border-t border-border bg-secondary/30">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+          <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">EarthOS</p>
+          <h2 className="mt-2 font-serif text-2xl font-semibold text-foreground text-balance">
+            Also near {market.region}
+          </h2>
+          <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground text-pretty">
+            Other experiences in the network, ranked by distance from {market.ports[0]}. Planning a
+            trip? Preview now, book when you&apos;re ready.
+          </p>
+          <div className="mt-6">
+            <NearMe defaultOrigin={market.coords} originLabel={market.ports[0]} excludeMarketId={market.id} />
+          </div>
+        </div>
       </section>
     </>
   )

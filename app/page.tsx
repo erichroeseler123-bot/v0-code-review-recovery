@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react"
 import { ALL_MARKETS, PROTECTED_SITES, type BookingProvider, type MarketStatus } from "@/lib/markets"
 import { getToursByMarket } from "@/lib/tours"
 import { NetworkMap } from "@/components/network-map"
+import { NearMe } from "@/components/near-me"
 
 const PROVIDER_LABEL: Record<BookingProvider, string> = {
   fareharbor: "FareHarbor",
@@ -49,6 +50,17 @@ export default function NetworkHub() {
           </div>
           <div className="mt-6 h-[420px] w-full overflow-hidden rounded-xl border border-border shadow-sm md:h-[520px]">
             <NetworkMap />
+          </div>
+
+          <div className="mt-10 rounded-xl border border-border bg-card p-6 sm:p-8">
+            <h3 className="font-serif text-xl font-semibold text-foreground">What&apos;s near me?</h3>
+            <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground text-pretty">
+              Share your location or pick a place you&apos;re planning around. EarthOS ranks the
+              network by distance and routes you to book.
+            </p>
+            <div className="mt-5">
+              <NearMe />
+            </div>
           </div>
         </div>
       </section>
