@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowRight, Crosshair, Loader2, MapPin } from "lucide-react"
+import { ArrowRight, Crosshair, Loader2, MapPin, Search } from "lucide-react"
 import {
   rankMarketsByDistance,
   formatMiles,
@@ -12,6 +12,7 @@ import {
 } from "@/lib/geo"
 import { formatPrice } from "@/lib/tours"
 import type { BookingProvider } from "@/lib/markets"
+import { WeatherChip } from "@/components/weather-chip"
 
 const PROVIDER_LABEL: Record<BookingProvider, string> = {
   fareharbor: "Books on-site",
@@ -32,6 +33,8 @@ export function NearMe({
   const [origin, setOrigin] = useState<Coords | null>(defaultOrigin ?? null)
   const [label, setLabel] = useState<string>(originLabel ?? "")
   const [locating, setLocating] = useState(false)
+  const [query, setQuery] = useState("")
+  const [searching, setSearching] = useState(false)
   const [error, setError] = useState<string>("")
 
   const ranked: RankedMarket[] = origin
@@ -41,7 +44,7 @@ export function NearMe({
   function useMyLocation() {
     setError("")
     if (!("geolocation" in navigator)) {
-      setError("Location isn't available in this browser. Pick a place below instead.")
+      setError("Location isn't available in this browser. Search or pick a place below instead.")
       return
     }
     setLocating(true)
@@ -52,23 +55,69 @@ export function NearMe({
         setLocating(false)
       },
       () => {
-        setError("Couldn't get your location. Pick a place below instead.")
+        // Graceful fallback: guide the user to typed search / quick picks.
+        setError("Location access was denied. Type a place below — like a city, address, or hotel.")
         setLocating(false)
       },
       { enableHighAccuracy: false, timeout: 8000 },
     )
   }
 
+  async function handleSearch(e: React.FormEvent) {
+    e.preventDefault()
+    const q = query.trim()
+    if (q.length < 2) return
+    setError("")
+    setSearching(true)
+    try {
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error ?? "Couldn't find that place. Try a city and state.")
+        setSearching(false)
+        return
+      }
+      setOrigin({ lat: data.lat, lng: data.lng })
+      setLabel(data.label)
+    } catch {
+      setError("Location lookup failed. Check your connection and try again.")
+    }
+    setSearching(false)
+  }
+
   return (
     <div>
-      <div className="flex flex-wrap items-center gap-3">
+      {/* Typed location search — works for planners who aren't there yet */}
+      <form onSubmit={handleSearch} className="flex flex-col gap-2 sm:flex-row">
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search a place — e.g. Eau Claire WI, Juneau cruise port, a hotel address"
+            className="w-full rounded-full border border-border bg-card py-2.5 pl-10 pr-4 text-sm text-foreground outline-none transition-colors focus:border-primary"
+            aria-label="Search a location"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={searching || query.trim().length < 2}
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+        >
+          {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+          Search
+        </button>
+      </form>
+
+      <div className="mt-3 flex flex-wrap items-center gap-3">
         <button
           type="button"
           onClick={useMyLocation}
           disabled={locating}
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary disabled:opacity-60"
         >
-          {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crosshair className="h-4 w-4" />}
+          {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crosshair className="h-4 w-4 text-primary" />}
           Use my location
         </button>
         <span className="text-sm text-muted-foreground">or preview a place:</span>
@@ -110,9 +159,10 @@ export function NearMe({
                 className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-serif text-lg font-semibold text-foreground">{market.name}</h3>
                     <span className="text-xs font-medium text-primary">{formatMiles(miles)}</span>
+                    <WeatherChip lat={market.coords.lat} lng={market.coords.lng} />
                   </div>
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground text-pretty">{market.scope}</p>
                   <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
