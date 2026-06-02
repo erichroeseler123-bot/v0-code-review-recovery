@@ -60,7 +60,7 @@ export function CheckoutForm({ market }: { market: Market }) {
         <h1 className="font-serif text-2xl font-semibold">Your cart is empty</h1>
         <p className="mt-2 text-muted-foreground">Add a tour to get started.</p>
         <Button asChild className="mt-6">
-          <Link href="/tours">Browse tours</Link>
+          <Link href={`${base}/tours`}>Browse tours</Link>
         </Button>
       </div>
     )

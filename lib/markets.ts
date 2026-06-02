@@ -34,6 +34,8 @@ export interface Market {
   /** Accent hue (oklch hue angle) so each storefront feels local but on-brand */
   accentHue: number
   status: MarketStatus
+  /** Four short trust badges shown under the hero */
+  trust: { label: string; note: string }[]
 }
 
 export const MARKETS: Record<string, Market> = {
@@ -50,6 +52,12 @@ export const MARKETS: Record<string, Market> = {
     ports: ["Juneau", "Ketchikan", "Skagway"],
     accentHue: 232,
     status: "live",
+    trust: [
+      { label: "Timed to your ship", note: "Tours built around cruise schedules" },
+      { label: "Back-on-board guarantee", note: "We get you back before departure" },
+      { label: "Local expert guides", note: "Small groups, real Alaskans" },
+      { label: "Free dock pickup", note: "Meet steps from your ship" },
+    ],
   },
   "last-frontier": {
     id: "last-frontier",
@@ -64,6 +72,12 @@ export const MARKETS: Record<string, Market> = {
     ports: ["Juneau", "Ketchikan", "Skagway", "Sitka"],
     accentHue: 200,
     status: "building",
+    trust: [
+      { label: "Hand-picked operators", note: "Only vetted, top-rated excursions" },
+      { label: "Cruise-port timed", note: "Back before your ship departs" },
+      { label: "Secure booking", note: "Reserved through trusted partners" },
+      { label: "Free cancellation", note: "On most excursions" },
+    ],
   },
   "new-orleans": {
     id: "new-orleans",
@@ -78,6 +92,12 @@ export const MARKETS: Record<string, Market> = {
     ports: ["New Orleans"],
     accentHue: 145,
     status: "building",
+    trust: [
+      { label: "Real Cajun guides", note: "Locals who know the bayou" },
+      { label: "Small-group boats", note: "Up close to the wildlife" },
+      { label: "Hotel pickup options", note: "Easy transport from the Quarter" },
+      { label: "Vetted operators", note: "Hand-picked, top-rated tours" },
+    ],
   },
   dells: {
     id: "dells",
@@ -92,6 +112,12 @@ export const MARKETS: Record<string, Market> = {
     ports: ["Wisconsin Dells"],
     accentHue: 95,
     status: "building",
+    trust: [
+      { label: "Built for groups", note: "Plans that scale to the whole crew" },
+      { label: "Family friendly", note: "Something for every age" },
+      { label: "Instant confirmation", note: "Lock it in before you arrive" },
+      { label: "Vetted operators", note: "Hand-picked Dells classics" },
+    ],
   },
   gosno: {
     id: "gosno",
@@ -106,6 +132,12 @@ export const MARKETS: Record<string, Market> = {
     ports: ["Denver", "Summit County"],
     accentHue: 250,
     status: "building",
+    trust: [
+      { label: "Private, not shared", note: "Your group, your vehicle" },
+      { label: "4WD mountain-ready", note: "Built for Colorado weather" },
+      { label: "Flat, fixed rates", note: "No surge, no surprises" },
+      { label: "Gear & ski space", note: "Room for all your equipment" },
+    ],
   },
   shuttleya: {
     id: "shuttleya",
@@ -120,6 +152,12 @@ export const MARKETS: Record<string, Market> = {
     ports: ["Idaho Springs"],
     accentHue: 40,
     status: "building",
+    trust: [
+      { label: "On-time pickups", note: "Reliable round-trip service" },
+      { label: "Reserved seats", note: "Your spot is guaranteed" },
+      { label: "Easy online booking", note: "Reserve in under a minute" },
+      { label: "Local drivers", note: "They know the canyon" },
+    ],
   },
 }
 
