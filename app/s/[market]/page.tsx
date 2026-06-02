@@ -31,7 +31,7 @@ export default async function MarketHome({
   if (!market) notFound()
 
   const tours = getToursByMarket(marketId)
-  const heroImage = tours.find((t) => t.image)?.image
+  const heroImage = market.heroImage || tours.find((t) => t.image)?.image
   const featured = tours.slice(0, 6)
 
   return (

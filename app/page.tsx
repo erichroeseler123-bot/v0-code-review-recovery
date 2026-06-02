@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { ALL_MARKETS, PROTECTED_SITES, type BookingProvider, type MarketStatus } from "@/lib/markets"
 import { getToursByMarket } from "@/lib/tours"
+import { NetworkMap } from "@/components/network-map"
 
 const PROVIDER_LABEL: Record<BookingProvider, string> = {
   fareharbor: "FareHarbor",
@@ -31,6 +32,26 @@ export default function NetworkHub() {
           </p>
         </div>
       </header>
+
+      <section className="border-b border-border bg-secondary/30">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium uppercase tracking-[0.25em] text-primary">EarthOS</p>
+              <h2 className="mt-2 font-serif text-2xl font-semibold text-foreground">
+                The network on the map
+              </h2>
+              <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground text-pretty">
+                Every storefront is a real place. Find a pin, tap it, and step into that
+                market&apos;s storefront and booking.
+              </p>
+            </div>
+          </div>
+          <div className="mt-6 h-[420px] w-full overflow-hidden rounded-xl border border-border shadow-sm md:h-[520px]">
+            <NetworkMap />
+          </div>
+        </div>
+      </section>
 
       <main className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <h2 className="font-serif text-2xl font-semibold text-foreground">Storefronts</h2>

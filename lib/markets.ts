@@ -31,6 +31,10 @@ export interface Market {
   /** One-line description of the single question this site answers */
   scope: string
   ports: string[]
+  /** Geographic center of the market — where it sits on the EarthOS world map */
+  coords: { lat: number; lng: number }
+  /** Hero banner image for the storefront */
+  heroImage: string
   /** Accent hue (oklch hue angle) so each storefront feels local but on-brand */
   accentHue: number
   status: MarketStatus
@@ -50,6 +54,8 @@ export const MARKETS: Record<string, Market> = {
     tagline: "Cruise-port shore excursions across Alaska",
     scope: "What shore excursion should I book at my Alaska cruise port?",
     ports: ["Juneau", "Ketchikan", "Skagway"],
+    coords: { lat: 58.3019, lng: -134.4197 },
+    heroImage: "/wta/hero-glacier-fjord.png",
     accentHue: 232,
     status: "live",
     trust: [
@@ -70,6 +76,8 @@ export const MARKETS: Record<string, Market> = {
     tagline: "Hand-picked Alaska cruise-port shore excursions",
     scope: "Which vetted shore excursion fits my Alaska port stop?",
     ports: ["Juneau", "Ketchikan", "Skagway", "Sitka"],
+    coords: { lat: 57.0531, lng: -135.33 },
+    heroImage: "/markets/last-frontier.png",
     accentHue: 200,
     status: "building",
     trust: [
@@ -90,6 +98,8 @@ export const MARKETS: Record<string, Market> = {
     tagline: "Swamp tours and New Orleans experiences",
     scope: "Which swamp or New Orleans tour should I book?",
     ports: ["New Orleans"],
+    coords: { lat: 29.9511, lng: -90.0715 },
+    heroImage: "/markets/new-orleans.png",
     accentHue: 145,
     status: "building",
     trust: [
@@ -110,6 +120,8 @@ export const MARKETS: Record<string, Market> = {
     tagline: "Group trips and getaways in Wisconsin Dells",
     scope: "What should our group do in the Wisconsin Dells?",
     ports: ["Wisconsin Dells"],
+    coords: { lat: 43.6275, lng: -89.771 },
+    heroImage: "/markets/dells.png",
     accentHue: 95,
     status: "building",
     trust: [
@@ -139,6 +151,8 @@ export const MARKETS: Record<string, Market> = {
       "Steamboat Springs",
       "Beaver Creek",
     ],
+    coords: { lat: 39.7392, lng: -104.9903 },
+    heroImage: "/markets/gosno.png",
     accentHue: 250,
     status: "building",
     trust: [
@@ -159,6 +173,8 @@ export const MARKETS: Record<string, Market> = {
     tagline: "Shuttle service to the Mighty Argo Cable Car",
     scope: "How do I get a shuttle to the Mighty Argo Cable Car?",
     ports: ["Idaho Springs"],
+    coords: { lat: 39.7425, lng: -105.5136 },
+    heroImage: "/markets/shuttleya.png",
     accentHue: 40,
     status: "building",
     trust: [
