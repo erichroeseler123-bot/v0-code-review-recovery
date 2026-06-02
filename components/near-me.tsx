@@ -13,6 +13,7 @@ import {
 import { formatPrice } from "@/lib/tours"
 import type { BookingProvider } from "@/lib/markets"
 import { WeatherChip } from "@/components/weather-chip"
+import { Next48Hours } from "@/components/next-48-hours"
 
 const PROVIDER_LABEL: Record<BookingProvider, string> = {
   fareharbor: "Books on-site",
@@ -36,6 +37,7 @@ export function NearMe({
   const [query, setQuery] = useState("")
   const [searching, setSearching] = useState(false)
   const [error, setError] = useState<string>("")
+  const [view, setView] = useState<"closest" | "soon">("closest")
 
   const ranked: RankedMarket[] = origin
     ? rankMarketsByDistance(origin).filter((r) => r.market.id !== excludeMarketId)
@@ -147,6 +149,34 @@ export function NearMe({
       {error ? <p className="mt-3 text-sm text-destructive">{error}</p> : null}
 
       {origin ? (
+        <div className="mt-6">
+          {/* View toggle: ranked-by-distance vs. what's on in the next 48h */}
+          <div className="inline-flex rounded-full border border-border bg-card p-1">
+            <button
+              type="button"
+              onClick={() => setView("closest")}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                view === "closest" ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-secondary"
+              }`}
+            >
+              Closest
+            </button>
+            <button
+              type="button"
+              onClick={() => setView("soon")}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                view === "soon" ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-secondary"
+              }`}
+            >
+              Next 48 hours
+            </button>
+          </div>
+
+          {view === "soon" ? <Next48Hours origin={origin} label={label} /> : null}
+        </div>
+      ) : null}
+
+      {origin && view === "closest" ? (
         <div className="mt-6">
           <p className="text-sm text-muted-foreground">
             <MapPin className="mr-1 inline h-4 w-4 text-primary" />
