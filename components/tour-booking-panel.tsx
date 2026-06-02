@@ -5,6 +5,7 @@ import { Check, ExternalLink, Minus, Plus } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
 import type { Market } from "@/lib/markets"
 import { formatPrice, type Tour } from "@/lib/tours"
+import { bookingHref } from "@/lib/links"
 
 const PROVIDER_LABEL: Record<string, string> = {
   viator: "Viator",
@@ -46,7 +47,7 @@ export function TourBookingPanel({ tour, market }: { tour: Tour; market: Market 
           <span className="text-xs text-muted-foreground">per traveler</span>
         </div>
         <a
-          href={tour.bookingUrl ?? "#"}
+          href={bookingHref(tour, market)}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-5 flex w-full items-center justify-center gap-1.5 rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"

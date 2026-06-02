@@ -6,6 +6,7 @@ import { Clock, ExternalLink, MapPin, Plus } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
 import type { Market } from "@/lib/markets"
 import { formatPrice, type Tour } from "@/lib/tours"
+import { bookingHref } from "@/lib/links"
 
 export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
   const { addItem } = useCart()
@@ -89,7 +90,7 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
             </button>
           ) : (
             <a
-              href={tour.bookingUrl ?? "#"}
+              href={bookingHref(tour, market)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
