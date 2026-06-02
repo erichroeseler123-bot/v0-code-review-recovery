@@ -12,7 +12,8 @@ export function CartDrawer() {
 
   function goToCheckout() {
     setOpen(false)
-    router.push("/checkout")
+    const marketId = items[0]?.marketId
+    router.push(marketId ? `/s/${marketId}/checkout` : "/")
   }
 
   return (
@@ -51,7 +52,7 @@ export function CartDrawer() {
             <ShoppingBag className="h-10 w-10 text-muted-foreground" />
             <p className="text-foreground">Your cart is empty.</p>
             <p className="text-sm text-muted-foreground">
-              Add a shore excursion to start your Alaska day.
+              Add an experience to start planning.
             </p>
           </div>
         ) : (

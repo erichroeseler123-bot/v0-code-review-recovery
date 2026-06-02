@@ -2,8 +2,6 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono, Fraunces } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { CartProvider } from '@/components/cart-provider'
-import { SiteHeader } from '@/components/site-header'
-import { SiteFooter } from '@/components/site-footer'
 import { CartDrawer } from '@/components/cart-drawer'
 import './globals.css'
 
@@ -12,9 +10,9 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 const _fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
 
 export const metadata: Metadata = {
-  title: 'Welcome to Alaska Tours | Cruise-Port Shore Excursions',
+  title: 'The Network | Purpose-built tour & experience storefronts',
   description:
-    'Book unforgettable Alaska shore excursions by cruise port — glacier flightseeing, whale watching, scenic rail, and wildlife tours. Easy on-site booking, trusted local guides.',
+    'A network of focused, local storefronts — each answering one question and booking through the right provider. Alaska shore excursions, New Orleans swamp tours, Wisconsin Dells getaways, Colorado mountain transport, and more.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -44,10 +42,8 @@ export default function RootLayout({
     <html lang="en" className="bg-background">
       <body className={`${_fraunces.variable} font-sans antialiased`}>
         <CartProvider>
-          <SiteHeader />
           <CartDrawer />
           <main className="min-h-screen">{children}</main>
-          <SiteFooter />
         </CartProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

@@ -42,6 +42,8 @@ export interface BookingProviderAdapter {
   name: string
   /** Whether checkout/payment happens on our own site */
   onSiteCheckout: boolean
+  /** Whether the provider's credentials are present in the environment */
+  isConfigured(): boolean
   getAvailability(tourId: string, fromISO: string, toISO: string): Promise<AvailabilitySlot[]>
   createBooking(input: CreateBookingInput): Promise<BookingResult>
 }

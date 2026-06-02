@@ -2,20 +2,23 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Clock, MapPin, Plus } from "lucide-react"
+import { Clock, ExternalLink, MapPin, Plus } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
+import type { Market } from "@/lib/markets"
 import { formatPrice, type Tour } from "@/lib/tours"
 
-export function TourCard({ tour }: { tour: Tour }) {
+export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
   const { addItem } = useCart()
+  const href = `/s/${market.id}/tours/${tour.slug}`
 
   function quickAdd(e: React.MouseEvent) {
     e.preventDefault()
     addItem({
       tourSlug: tour.slug,
+      marketId: market.id,
       title: tour.title,
       image: tour.image,
-      port: tour.port,
+      port: tour.location,
       priceCents: tour.priceFromCents,
       travelers: 1,
     })
@@ -23,14 +26,25 @@ export function TourCard({ tour }: { tour: Tour }) {
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-md">
-      <Link href={`/tours/${tour.slug}`} className="relative block aspect-[4/3] overflow-hidden">
-        <Image
-          src={tour.image || "/placeholder.svg"}
-          alt={tour.title}
-          fill
-          sizes="(max-width: 768px) 100vw, 33vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+      <Link href={href} className="relative block aspect-[4/3] overflow-hidden">
+        {tour.image ? (
+          <Image
+            src={tour.image || "/placeholder.svg"}
+            alt={tour.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full flex-col justify-between bg-primary p-4">
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-primary-foreground/80">
+              {tour.location}
+            </span>
+            <span className="font-serif text-2xl font-semibold leading-tight text-primary-foreground text-balance">
+              {tour.category}
+            </span>
+          </div>
+        )}
         <span className="absolute left-3 top-3 rounded-full bg-background/90 px-2.5 py-1 text-xs font-medium text-foreground">
           {tour.category}
         </span>
@@ -40,7 +54,7 @@ export function TourCard({ tour }: { tour: Tour }) {
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <MapPin className="h-3.5 w-3.5" />
-            {tour.port}
+            {tour.location}
           </span>
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
@@ -48,7 +62,7 @@ export function TourCard({ tour }: { tour: Tour }) {
           </span>
         </div>
 
-        <Link href={`/tours/${tour.slug}`} className="mt-2">
+        <Link href={href} className="mt-2">
           <h3 className="font-serif text-lg font-semibold leading-snug text-foreground text-balance">
             {tour.title}
           </h3>
@@ -62,14 +76,26 @@ export function TourCard({ tour }: { tour: Tour }) {
               {formatPrice(tour.priceFromCents)}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={quickAdd}
-            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            <Plus className="h-4 w-4" />
-            Add
-          </button>
+          {market.onSiteCheckout ? (
+            <button
+              type="button"
+              onClick={quickAdd}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              <Plus className="h-4 w-4" />
+              Add
+            </button>
+          ) : (
+            <a
+              href={tour.bookingUrl ?? "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Book
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          )}
         </div>
       </div>
     </article>

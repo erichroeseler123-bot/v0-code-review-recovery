@@ -4,8 +4,11 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 
 export interface CartItem {
   tourSlug: string
+  /** Which storefront/market this item belongs to */
+  marketId: string
   title: string
   image: string
+  /** Display label for the location (port / town / pickup) */
   port: string
   priceCents: number
   travelers: number

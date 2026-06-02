@@ -1,29 +1,53 @@
+export type TourCategory =
+  | "Flightseeing"
+  | "Wildlife"
+  | "Rail"
+  | "Cruise"
+  | "Walking"
+  | "Swamp"
+  | "Adventure"
+  | "Transport"
+  | "Group"
+
 export interface Tour {
   slug: string
+  /** Which market/storefront this tour belongs to */
+  marketId: string
   title: string
-  port: string
-  category: "Flightseeing" | "Wildlife" | "Rail" | "Cruise" | "Walking"
-  /** FareHarbor item pk — used by the booking adapter to fetch availability */
-  fareHarborItemId: string
+  /** Port / town / pickup location */
+  location: string
+  category: TourCategory
+  /**
+   * Provider reference:
+   *  - fareharbor: item pk
+   *  - rezdy: product code
+   *  - viator/getyourguide: not used (see bookingUrl)
+   */
+  providerRef?: string
+  /** Affiliate deep link for handoff providers (viator / getyourguide) */
+  bookingUrl?: string
   shortDescription: string
   description: string
   durationHours: number
   priceFromCents: number
+  /** Empty string => card renders a designed typographic tile */
   image: string
   highlights: string[]
   groupSize: string
 }
 
 export const TOURS: Tour[] = [
+  // ───────────────────────────── ALASKA (FareHarbor, on-site) ─────────────────────────────
   {
     slug: "mendenhall-glacier-helicopter",
+    marketId: "alaska",
     title: "Mendenhall Glacier Helicopter & Glacier Walk",
-    port: "Juneau",
+    location: "Juneau",
     category: "Flightseeing",
-    fareHarborItemId: "100001",
+    providerRef: "100001",
     shortDescription: "Soar over the icefield and step out onto a living glacier.",
     description:
-      "Lift off from Juneau and fly over the vast Juneau Icefield before landing on Mendenhall Glacier itself. With crampons fitted and a certified guide leading the way, you'll walk among blue crevasses and meltwater pools high above the tree line. This is the single most requested shore excursion in Southeast Alaska — and with good reason.",
+      "Lift off from Juneau and fly over the vast Juneau Icefield before landing on Mendenhall Glacier itself. With crampons fitted and a certified guide leading the way, you'll walk among blue crevasses and meltwater pools high above the tree line. This is the single most requested shore excursion in Southeast Alaska.",
     durationHours: 3,
     priceFromCents: 54900,
     image: "/wta/helicopter-glacier.png",
@@ -37,10 +61,11 @@ export const TOURS: Tour[] = [
   },
   {
     slug: "juneau-whale-watching",
+    marketId: "alaska",
     title: "Juneau Whale Watching & Wildlife Cruise",
-    port: "Juneau",
+    location: "Juneau",
     category: "Wildlife",
-    fareHarborItemId: "100002",
+    providerRef: "100002",
     shortDescription: "Humpbacks, orcas, and eagles in the waters of Auke Bay.",
     description:
       "Cruise the rich feeding grounds of Auke Bay aboard a heated, stabilized vessel built for wildlife viewing. Naturalist guides help you spot humpback whales bubble-net feeding, orca pods, sea lions, and bald eagles. We guarantee whale sightings — if you don't see one, you get a refund.",
@@ -57,10 +82,11 @@ export const TOURS: Tour[] = [
   },
   {
     slug: "white-pass-scenic-railway",
+    marketId: "alaska",
     title: "White Pass & Yukon Route Scenic Railway",
-    port: "Skagway",
+    location: "Skagway",
     category: "Rail",
-    fareHarborItemId: "100003",
+    providerRef: "100003",
     shortDescription: "Ride the historic gold-rush railway into the mountains.",
     description:
       "Climb nearly 3,000 feet in just 20 miles aboard vintage rail cars on one of the most scenic railways in the world. Built during the Klondike Gold Rush, the White Pass route carries you past waterfalls, gorges, and the original Trail of '98, with narration that brings the history to life.",
@@ -77,10 +103,11 @@ export const TOURS: Tour[] = [
   },
   {
     slug: "ketchikan-bear-wildlife",
+    marketId: "alaska",
     title: "Ketchikan Black Bear & Rainforest Wildlife Tour",
-    port: "Ketchikan",
+    location: "Ketchikan",
     category: "Wildlife",
-    fareHarborItemId: "100004",
+    providerRef: "100004",
     shortDescription: "Watch wild black bears fish for salmon in the Tongass.",
     description:
       "Travel into the Tongass National Forest, the largest temperate rainforest in the country, to a protected salmon stream where black bears gather to feed. From elevated boardwalks, watch bears, eagles, and salmon in their natural habitat alongside an expert wildlife guide.",
@@ -97,10 +124,11 @@ export const TOURS: Tour[] = [
   },
   {
     slug: "tracy-arm-fjord-cruise",
+    marketId: "alaska",
     title: "Tracy Arm Fjord & Sawyer Glacier Cruise",
-    port: "Juneau",
+    location: "Juneau",
     category: "Cruise",
-    fareHarborItemId: "100005",
+    providerRef: "100005",
     shortDescription: "Sail a narrow fjord to a tidewater glacier face.",
     description:
       "Cruise deep into Tracy Arm, a steep-walled fjord lined with waterfalls and floating ice, all the way to the face of Sawyer Glacier. Watch for harbor seals resting on icebergs and listen for the thunder of calving ice. A full-day signature experience for those who want the real Alaska.",
@@ -117,10 +145,11 @@ export const TOURS: Tour[] = [
   },
   {
     slug: "skagway-historic-walking",
+    marketId: "alaska",
     title: "Skagway Gold-Rush Historic Walking Tour",
-    port: "Skagway",
+    location: "Skagway",
     category: "Walking",
-    fareHarborItemId: "100006",
+    providerRef: "100006",
     shortDescription: "Walk the boardwalks of a preserved gold-rush town.",
     description:
       "Step back to 1898 on a guided walk through Skagway's historic district, part of the Klondike Gold Rush National Historical Park. Hear the stories of stampeders, saloons, and con men as you explore preserved storefronts and boardwalks just steps from the ship.",
@@ -135,10 +164,156 @@ export const TOURS: Tour[] = [
     ],
     groupSize: "Small group, up to 16",
   },
+
+  // ─────────────────────── LAST FRONTIER (Viator, handoff) ───────────────────────
+  {
+    slug: "sitka-sea-otter-wildlife-quest",
+    marketId: "last-frontier",
+    title: "Sitka Sea Otter & Wildlife Quest",
+    location: "Sitka",
+    category: "Wildlife",
+    bookingUrl: "https://www.viator.com/",
+    shortDescription: "Sea otters, whales, and eagles on a Sitka Sound cruise.",
+    description:
+      "A hand-picked Sitka favorite: cruise the protected waters of Sitka Sound in search of sea otters, humpback whales, puffins, and bald eagles, with a naturalist narrating the whole way. Booked and fulfilled through our vetted Viator partner.",
+    durationHours: 3,
+    priceFromCents: 16900,
+    image: "/wta/whale-watching.png",
+    highlights: ["Sea otter viewing", "Naturalist guide", "Protected-water cruising", "Vetted operator"],
+    groupSize: "Small group",
+  },
+  {
+    slug: "ketchikan-misty-fjords-flightseeing",
+    marketId: "last-frontier",
+    title: "Misty Fjords Flightseeing by Floatplane",
+    location: "Ketchikan",
+    category: "Flightseeing",
+    bookingUrl: "https://www.viator.com/",
+    shortDescription: "A floatplane flight into the Misty Fjords wilderness.",
+    description:
+      "Soar over granite cliffs and waterfalls into Misty Fjords National Monument, with a water landing on a remote alpine lake. A vetted, top-rated Ketchikan experience booked through our Viator partner.",
+    durationHours: 2,
+    priceFromCents: 28900,
+    image: "/wta/hero-glacier-fjord.png",
+    highlights: ["Floatplane flightseeing", "Remote water landing", "Misty Fjords National Monument", "Vetted operator"],
+    groupSize: "Up to 8",
+  },
+
+  // ─────────────────────── NEW ORLEANS / SWAMP (Viator, handoff) ───────────────────────
+  {
+    slug: "honey-island-swamp-boat-tour",
+    marketId: "new-orleans",
+    title: "Honey Island Swamp Boat Tour",
+    location: "New Orleans",
+    category: "Swamp",
+    bookingUrl: "https://www.viator.com/",
+    shortDescription: "Glide through one of the most pristine swamps in America.",
+    description:
+      "Board a small boat and glide into the Honey Island Swamp to see alligators, herons, wild boar, and cypress draped in Spanish moss. Local Cajun guides share the stories of the bayou. Booked through our vetted Viator partner.",
+    durationHours: 2.5,
+    priceFromCents: 7900,
+    image: "",
+    highlights: ["Alligator and wildlife viewing", "Cajun local guides", "Small-boat access", "Round-trip transport option"],
+    groupSize: "Small group",
+  },
+  {
+    slug: "new-orleans-cemetery-history-walk",
+    marketId: "new-orleans",
+    title: "New Orleans Cemetery & History Walking Tour",
+    location: "New Orleans",
+    category: "Walking",
+    bookingUrl: "https://www.viator.com/",
+    shortDescription: "Above-ground tombs and the stories behind them.",
+    description:
+      "Walk a historic New Orleans cemetery with a licensed guide and hear the real history behind the city's famous above-ground tombs, voodoo legends, and founding families. Booked through our vetted Viator partner.",
+    durationHours: 2,
+    priceFromCents: 3900,
+    image: "",
+    highlights: ["Licensed local guide", "Historic above-ground tombs", "City history and legends", "Easy walking"],
+    groupSize: "Small group",
+  },
+
+  // ─────────────────────── THE DELLS (GetYourGuide, handoff) ───────────────────────
+  {
+    slug: "wisconsin-dells-duck-tour",
+    marketId: "dells",
+    title: "Original Wisconsin Ducks Land & Water Tour",
+    location: "Wisconsin Dells",
+    category: "Adventure",
+    bookingUrl: "https://www.getyourguide.com/",
+    shortDescription: "The classic amphibious tour over land and river.",
+    description:
+      "Ride a genuine WWII amphibious 'Duck' over wooded trails and splash straight into the Wisconsin River. A Dells classic the whole group will love, booked through our GetYourGuide partner.",
+    durationHours: 1,
+    priceFromCents: 3500,
+    image: "",
+    highlights: ["Land-and-water amphibious ride", "Great for groups and families", "Scenic river and trails", "Vetted operator"],
+    groupSize: "Group friendly",
+  },
+  {
+    slug: "dells-boat-tour-upper-dells",
+    marketId: "dells",
+    title: "Upper Dells Boat Tour with Shore Landings",
+    location: "Wisconsin Dells",
+    category: "Group",
+    bookingUrl: "https://www.getyourguide.com/",
+    shortDescription: "Sandstone cliffs and famous shore landings by boat.",
+    description:
+      "Cruise the Upper Dells past towering sandstone formations with guided shore landings at Witches Gulch and Stand Rock. An easy, scenic outing ideal for larger groups. Booked through our GetYourGuide partner.",
+    durationHours: 2.5,
+    priceFromCents: 4200,
+    image: "",
+    highlights: ["Iconic sandstone gorges", "Guided shore landings", "Relaxed pace", "Group friendly"],
+    groupSize: "Group friendly",
+  },
+
+  // ─────────────────────── GOSNO (Rezdy, on-site) ───────────────────────
+  {
+    slug: "denver-airport-to-summit-private-suv",
+    marketId: "gosno",
+    title: "Denver Airport → Summit County Private SUV",
+    location: "Denver",
+    category: "Transport",
+    providerRef: "GOSNO-DEN-SUMMIT",
+    shortDescription: "Private door-to-door mountain transfer in a 4WD SUV.",
+    description:
+      "Skip the shared shuttle. A private 4WD SUV picks you up curbside at DEN and takes your group straight to your Summit County lodging, with room for gear. Booked and paid on-site through our Rezdy system.",
+    durationHours: 2,
+    priceFromCents: 39900,
+    image: "",
+    highlights: ["Private door-to-door", "4WD mountain-ready vehicles", "Gear and ski space", "Fixed flat rate"],
+    groupSize: "Up to 6 + luggage",
+  },
+
+  // ─────────────────────── SHUTTLEYA (Rezdy, on-site) ───────────────────────
+  {
+    slug: "argo-cable-car-shuttle",
+    marketId: "shuttleya",
+    title: "Mighty Argo Cable Car Shuttle",
+    location: "Idaho Springs",
+    category: "Transport",
+    providerRef: "SHUTTLEYA-ARGO",
+    shortDescription: "Round-trip shuttle to the Mighty Argo Cable Car.",
+    description:
+      "A simple, reliable round-trip shuttle to the Mighty Argo Cable Car in Idaho Springs. Reserve your seats and pay on-site through our Rezdy system.",
+    durationHours: 1,
+    priceFromCents: 2900,
+    image: "",
+    highlights: ["Round-trip shuttle", "Reserved seats", "On-time pickups", "Easy online booking"],
+    groupSize: "Per seat",
+  },
 ]
 
 export function getTour(slug: string): Tour | undefined {
   return TOURS.find((t) => t.slug === slug)
+}
+
+export function getToursByMarket(marketId: string): Tour[] {
+  return TOURS.filter((t) => t.marketId === marketId)
+}
+
+export function portsForMarket(marketId: string): string[] {
+  return Array.from(new Set(getToursByMarket(marketId).map((t) => t.location)))
 }
 
 export function formatPrice(cents: number): string {
@@ -148,5 +323,3 @@ export function formatPrice(cents: number): string {
     minimumFractionDigits: 0,
   }).format(cents / 100)
 }
-
-export const PORTS = Array.from(new Set(TOURS.map((t) => t.port)))

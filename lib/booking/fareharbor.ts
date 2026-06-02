@@ -53,6 +53,7 @@ function formatLabel(startISO: string) {
 export const fareHarborAdapter: BookingProviderAdapter = {
   name: "fareharbor",
   onSiteCheckout: true,
+  isConfigured: isFareHarborConfigured,
 
   async getAvailability(tourId, fromISO, toISO): Promise<AvailabilitySlot[]> {
     const cfg = getConfig()

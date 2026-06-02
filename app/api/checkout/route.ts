@@ -1,7 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { fareHarborAdapter, isFareHarborConfigured } from "@/lib/booking/fareharbor"
+import { getAdapter } from "@/lib/booking"
 import type { CheckoutRequest } from "@/lib/booking/types"
 import { getTour } from "@/lib/tours"
+import { getMarket } from "@/lib/markets"
 
 export async function POST(req: NextRequest) {
   let body: CheckoutRequest
@@ -18,35 +19,49 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Name and email are required." }, { status: 400 })
   }
 
-  // If FareHarbor credentials are not set yet, fail clearly instead of pretending.
-  if (!isFareHarborConfigured()) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error:
-          "Booking is not connected yet. Add FAREHARBOR_API_APP_KEY, FAREHARBOR_API_USER_KEY, and FAREHARBOR_SHORTNAME to enable live checkout.",
-        code: "FAREHARBOR_NOT_CONFIGURED",
-      },
-      { status: 503 },
-    )
-  }
-
   try {
     const confirmations: string[] = []
 
     for (const item of body.items) {
       const tour = getTour(item.tourSlug)
       if (!tour) {
+        return NextResponse.json({ ok: false, error: `Unknown tour: ${item.tourSlug}` }, { status: 400 })
+      }
+      const market = getMarket(tour.marketId)
+      if (!market) {
+        return NextResponse.json({ ok: false, error: `Unknown market for ${item.tourSlug}` }, { status: 400 })
+      }
+
+      const adapter = getAdapter(market.provider)
+
+      // Handoff providers don't check out on-site.
+      if (!adapter.onSiteCheckout) {
         return NextResponse.json(
-          { ok: false, error: `Unknown tour: ${item.tourSlug}` },
-          { status: 400 },
+          {
+            ok: false,
+            error: `${tour.title} is booked on our partner's site. Use the "Book on partner site" button.`,
+            code: "HANDOFF_PROVIDER",
+          },
+          { status: 409 },
         )
       }
-      const fhItemId = tour.fareHarborItemId
-      // Resolve the chosen date to a concrete FareHarbor availability.
+
+      // On-site provider not configured yet — fail clearly instead of pretending.
+      if (!adapter.isConfigured()) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: `${market.name} booking is not connected yet. Add the ${market.provider.toUpperCase()} credentials to enable live checkout.`,
+            code: "PROVIDER_NOT_CONFIGURED",
+          },
+          { status: 503 },
+        )
+      }
+
+      const providerRef = tour.providerRef ?? ""
       const dayStart = `${item.date}T00:00:00`
       const dayEnd = `${item.date}T23:59:59`
-      const slots = await fareHarborAdapter.getAvailability(fhItemId, dayStart, dayEnd)
+      const slots = await adapter.getAvailability(providerRef, dayStart, dayEnd)
 
       if (slots.length === 0) {
         return NextResponse.json(
@@ -56,18 +71,15 @@ export async function POST(req: NextRequest) {
       }
 
       const slot = slots[0]
-      const result = await fareHarborAdapter.createBooking({
-        tourId: fhItemId,
+      const result = await adapter.createBooking({
+        tourId: providerRef,
         availabilityId: slot.id,
         travelers: item.travelers,
         customer: body.contact,
       })
 
       if (!result.ok || !result.bookingId) {
-        return NextResponse.json(
-          { ok: false, error: result.error ?? "Booking failed." },
-          { status: 502 },
-        )
+        return NextResponse.json({ ok: false, error: result.error ?? "Booking failed." }, { status: 502 })
       }
       confirmations.push(result.bookingId)
     }

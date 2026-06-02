@@ -9,11 +9,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { formatPrice } from "@/lib/tours"
+import type { Market } from "@/lib/markets"
 import { AlertCircle, Lock } from "lucide-react"
 
-export function CheckoutForm() {
+export function CheckoutForm({ market }: { market: Market }) {
   const { items, subtotalCents, clear } = useCart()
   const router = useRouter()
+  const base = `/s/${market.id}`
   const [contact, setContact] = useState({ name: "", email: "", phone: "" })
   const [date, setDate] = useState("")
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle")
@@ -45,7 +47,7 @@ export function CheckoutForm() {
         return
       }
       clear()
-      router.push(`/checkout/confirmed?ref=${encodeURIComponent(data.confirmationCode ?? "")}`)
+      router.push(`${base}/checkout/confirmed?ref=${encodeURIComponent(data.confirmationCode ?? "")}`)
     } catch {
       setStatus("error")
       setError("Network error. Please try again.")

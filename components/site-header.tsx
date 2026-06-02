@@ -4,32 +4,35 @@ import Link from "next/link"
 import { useState } from "react"
 import { Menu, ShoppingBag, X } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
-import { ACTIVE_MARKET, PORTS_NAV } from "@/lib/nav"
+import type { Market } from "@/lib/markets"
+import { portsForMarket } from "@/lib/tours"
 
-export function SiteHeader() {
+export function SiteHeader({ market }: { market: Market }) {
   const { count, setOpen } = useCart()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const base = `/s/${market.id}`
+  const ports = portsForMarket(market.id).slice(0, 5)
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link href="/" className="flex flex-col leading-none">
+        <Link href={base} className="flex flex-col leading-none">
           <span className="font-serif text-lg font-semibold tracking-tight text-foreground">
-            Welcome to Alaska
+            {market.brand}
           </span>
           <span className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
-            Shore Excursions
+            {market.region}
           </span>
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
-          <Link href="/tours" className="text-sm text-foreground/80 transition-colors hover:text-foreground">
-            All Tours
+          <Link href={`${base}/tours`} className="text-sm text-foreground/80 transition-colors hover:text-foreground">
+            {market.provider === "rezdy" || market.provider === "fareharbor" ? "All Tours" : "Browse"}
           </Link>
-          {PORTS_NAV.map((port) => (
+          {ports.map((port) => (
             <Link
               key={port}
-              href={`/tours?port=${encodeURIComponent(port)}`}
+              href={`${base}/tours?port=${encodeURIComponent(port)}`}
               className="text-sm text-foreground/80 transition-colors hover:text-foreground"
             >
               {port}
@@ -38,6 +41,12 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-1">
+          <Link
+            href="/"
+            className="hidden rounded-md px-3 py-2 text-xs uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
+          >
+            Network
+          </Link>
           <button
             type="button"
             onClick={() => setOpen(true)}
@@ -68,17 +77,17 @@ export function SiteHeader() {
           <ul className="flex flex-col gap-1">
             <li>
               <Link
-                href="/tours"
+                href={`${base}/tours`}
                 onClick={() => setMobileOpen(false)}
                 className="block rounded-md px-3 py-2 text-sm text-foreground hover:bg-secondary"
               >
-                All Tours
+                Browse
               </Link>
             </li>
-            {PORTS_NAV.map((port) => (
+            {ports.map((port) => (
               <li key={port}>
                 <Link
-                  href={`/tours?port=${encodeURIComponent(port)}`}
+                  href={`${base}/tours?port=${encodeURIComponent(port)}`}
                   onClick={() => setMobileOpen(false)}
                   className="block rounded-md px-3 py-2 text-sm text-foreground hover:bg-secondary"
                 >
@@ -86,8 +95,17 @@ export function SiteHeader() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                href="/"
+                onClick={() => setMobileOpen(false)}
+                className="block rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-secondary"
+              >
+                ← All network sites
+              </Link>
+            </li>
           </ul>
-          <p className="mt-3 px-3 text-xs text-muted-foreground">{ACTIVE_MARKET.tagline}</p>
+          <p className="mt-3 px-3 text-xs text-muted-foreground">{market.tagline}</p>
         </nav>
       )}
     </header>

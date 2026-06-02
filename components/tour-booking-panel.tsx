@@ -1,29 +1,67 @@
 "use client"
 
 import { useState } from "react"
-import { Check, Minus, Plus } from "lucide-react"
+import { Check, ExternalLink, Minus, Plus } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
+import type { Market } from "@/lib/markets"
 import { formatPrice, type Tour } from "@/lib/tours"
 
-export function TourBookingPanel({ tour }: { tour: Tour }) {
+const PROVIDER_LABEL: Record<string, string> = {
+  viator: "Viator",
+  getyourguide: "GetYourGuide",
+  fareharbor: "FareHarbor",
+  rezdy: "Rezdy",
+}
+
+export function TourBookingPanel({ tour, market }: { tour: Tour; market: Market }) {
   const { addItem, setOpen } = useCart()
   const [travelers, setTravelers] = useState(2)
   const [added, setAdded] = useState(false)
 
-  function add(openCart: boolean) {
+  function add() {
     addItem({
       tourSlug: tour.slug,
+      marketId: market.id,
       title: tour.title,
       image: tour.image,
-      port: tour.port,
+      port: tour.location,
       priceCents: tour.priceFromCents,
       travelers,
     })
-    if (!openCart) setOpen(false)
+    setOpen(true)
     setAdded(true)
     setTimeout(() => setAdded(false), 1800)
   }
 
+  // Handoff providers: book on the partner's site.
+  if (!market.onSiteCheckout) {
+    const label = PROVIDER_LABEL[market.provider] ?? "our partner"
+    return (
+      <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+        <div>
+          <span className="text-sm text-muted-foreground">From</span>
+          <p className="font-serif text-3xl font-semibold text-foreground">
+            {formatPrice(tour.priceFromCents)}
+          </p>
+          <span className="text-xs text-muted-foreground">per traveler</span>
+        </div>
+        <a
+          href={tour.bookingUrl ?? "#"}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-5 flex w-full items-center justify-center gap-1.5 rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Book on {label}
+          <ExternalLink className="h-4 w-4" />
+        </a>
+        <p className="mt-3 text-center text-xs text-muted-foreground">
+          Availability, dates, and payment are handled securely by {label}.
+        </p>
+      </div>
+    )
+  }
+
+  // On-site providers (FareHarbor / Rezdy): add to cart.
   return (
     <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
       <div className="flex items-baseline justify-between">
@@ -73,7 +111,7 @@ export function TourBookingPanel({ tour }: { tour: Tour }) {
 
       <button
         type="button"
-        onClick={() => add(true)}
+        onClick={add}
         className="mt-4 w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
       >
         {added ? (
@@ -85,7 +123,7 @@ export function TourBookingPanel({ tour }: { tour: Tour }) {
         )}
       </button>
       <p className="mt-3 text-center text-xs text-muted-foreground">
-        Choose your exact date and time at checkout. Free dock pickup included.
+        Choose your exact date and time at checkout.
       </p>
     </div>
   )
