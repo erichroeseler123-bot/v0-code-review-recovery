@@ -45,3 +45,17 @@ export interface BookingProviderAdapter {
   getAvailability(tourId: string, fromISO: string, toISO: string): Promise<AvailabilitySlot[]>
   createBooking(input: CreateBookingInput): Promise<BookingResult>
 }
+
+/** A single cart line as sent from the checkout form. */
+export interface CheckoutItem {
+  tourSlug: string
+  /** ISO date (yyyy-mm-dd) the guest wants to travel */
+  date: string
+  travelers: number
+}
+
+/** The full checkout payload posted to /api/checkout. */
+export interface CheckoutRequest {
+  items: CheckoutItem[]
+  contact: BookingCustomer
+}
