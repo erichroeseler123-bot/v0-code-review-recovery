@@ -45,9 +45,11 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
             </span>
           </div>
         )}
-        <span className="absolute left-3 top-3 rounded-full bg-background/90 px-2.5 py-1 text-xs font-medium text-foreground">
-          {tour.category}
-        </span>
+        {tour.image ? (
+          <span className="absolute left-3 top-3 rounded-full bg-background/90 px-2.5 py-1 text-xs font-medium text-foreground">
+            {tour.category}
+          </span>
+        ) : null}
       </Link>
 
       <div className="flex flex-1 flex-col p-4">
