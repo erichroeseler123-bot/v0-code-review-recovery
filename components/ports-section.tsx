@@ -5,11 +5,13 @@ import type { Market } from "@/lib/markets"
 import type { Tour } from "@/lib/tours"
 
 const PORT_IMAGES: Record<string, string> = {
-  Juneau: "/wta/helicopter-glacier.png",
-  Skagway: "/wta/scenic-train.png",
-  Ketchikan: "/wta/bear-wildlife.png",
-  Sitka: "/wta/whale-watching.png",
+  Juneau: "/wta/juneau.png",
+  Skagway: "/wta/skagway.png",
+  Ketchikan: "/wta/ketchikan.png",
+  Sitka: "/last-frontier/glacier-bay-kayaking.png",
   Seward: "/wta/hero-glacier-fjord.png",
+  "New Orleans": "/nola/honey-island-swamp.png",
+  "Wisconsin Dells": "/dells/wisconsin-dells-boat-tour.png",
 }
 
 export function PortsSection({ market, tours }: { market: Market; tours: Tour[] }) {
