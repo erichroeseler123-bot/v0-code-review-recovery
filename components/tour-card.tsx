@@ -5,8 +5,9 @@ import Link from "next/link"
 import { Clock, ExternalLink, MapPin, Plus } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
 import type { Market } from "@/lib/markets"
-import { formatPrice, type Tour, getTourImageUrl } from "@/lib/tours"
+import { formatPrice, type Tour } from "@/lib/tours"
 import { bookingHref } from "@/lib/links"
+import { getTourImageUrl } from "@/app/actions/tours"
 import { useEffect, useState } from "react"
 
 export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
