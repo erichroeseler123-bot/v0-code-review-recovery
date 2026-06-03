@@ -1,6 +1,7 @@
 'use server'
 
-import { auth } from '@/lib/auth'
+// import { auth } from '@/lib/auth'
+// Auth temporarily disabled - re-enable when custom bookings are implemented
 import { db } from '@/lib/db'
 import { bookings, gosnoBookings, blueHillsBookings, feastlyBookings, parrBookings, shuttleyaBookings } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
@@ -8,11 +9,13 @@ import { headers } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { nanoid } from 'nanoid'
 
+/*
 async function getUserId() {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session?.user) throw new Error('Unauthorized')
   return session.user.id
 }
+*/
 
 // Create booking (before Stripe payment)
 export async function createBooking(data: any) {

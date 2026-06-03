@@ -1,6 +1,9 @@
-import { betterAuth } from 'better-auth'
-import { pool } from '@/lib/db'
+// import { betterAuth } from 'better-auth'
+// import { pool } from '@/lib/db'
 
+// Auth is disabled for now - public storefronts don't require it
+// Re-enable when custom booking is implemented
+/*
 export const auth = betterAuth({
   database: pool,
   baseURL:
