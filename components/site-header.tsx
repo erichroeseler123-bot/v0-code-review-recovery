@@ -1,113 +1,24 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
-import { Menu, ShoppingBag, X } from "lucide-react"
-import { useCart } from "@/components/cart-provider"
 import type { Market } from "@/lib/markets"
-import { portsForMarket } from "@/lib/tours"
 
 export function SiteHeader({ market }: { market: Market }) {
-  const { count, setOpen } = useCart()
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const base = `/s/${market.id}`
-  const ports = portsForMarket(market.id).slice(0, 5)
-
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link href={base} className="flex flex-col leading-none">
-          <span className="font-serif text-lg font-semibold tracking-tight text-foreground">
-            {market.brand}
-          </span>
-          <span className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
-            {market.region}
-          </span>
+    <header className="border-b bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
+        <Link href={`/s/${market.id}`} className="text-xl font-bold">
+          {market.brand}
         </Link>
-
-        <nav className="hidden items-center gap-6 md:flex">
-          <Link href={`${base}/tours`} className="text-sm text-foreground/80 transition-colors hover:text-foreground">
-            {market.provider === "custom" || market.provider === "fareharbor" ? "All Tours" : "Browse"}
+        <nav className="flex gap-6 text-sm">
+          <Link href={`/s/${market.id}`} className="hover:text-primary">
+            Home
           </Link>
-          {ports.map((port) => (
-            <Link
-              key={port}
-              href={`${base}/tours?port=${encodeURIComponent(port)}`}
-              className="text-sm text-foreground/80 transition-colors hover:text-foreground"
-            >
-              {port}
-            </Link>
-          ))}
+          <Link href={`/s/${market.id}/tours`} className="hover:text-primary">
+            Tours
+          </Link>
         </nav>
-
-        <div className="flex items-center gap-1">
-          <Link
-            href="/"
-            className="hidden rounded-md px-3 py-2 text-xs uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
-          >
-            Network
-          </Link>
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="relative inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground transition-colors hover:bg-secondary"
-            aria-label={`Open cart, ${count} item${count === 1 ? "" : "s"}`}
-          >
-            <ShoppingBag className="h-5 w-5" />
-            {count > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-semibold text-accent-foreground">
-                {count}
-              </span>
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={() => setMobileOpen((v) => !v)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground transition-colors hover:bg-secondary md:hidden"
-            aria-label="Toggle menu"
-            aria-expanded={mobileOpen}
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
       </div>
-
-      {mobileOpen && (
-        <nav className="border-t border-border bg-background px-4 py-3 md:hidden">
-          <ul className="flex flex-col gap-1">
-            <li>
-              <Link
-                href={`${base}/tours`}
-                onClick={() => setMobileOpen(false)}
-                className="block rounded-md px-3 py-2 text-sm text-foreground hover:bg-secondary"
-              >
-                Browse
-              </Link>
-            </li>
-            {ports.map((port) => (
-              <li key={port}>
-                <Link
-                  href={`${base}/tours?port=${encodeURIComponent(port)}`}
-                  onClick={() => setMobileOpen(false)}
-                  className="block rounded-md px-3 py-2 text-sm text-foreground hover:bg-secondary"
-                >
-                  {port}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <Link
-                href="/"
-                onClick={() => setMobileOpen(false)}
-                className="block rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-secondary"
-              >
-                ← All network sites
-              </Link>
-            </li>
-          </ul>
-          <p className="mt-3 px-3 text-xs text-muted-foreground">{market.tagline}</p>
-        </nav>
-      )}
     </header>
   )
 }
