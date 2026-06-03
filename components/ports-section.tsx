@@ -12,6 +12,7 @@ const PORT_IMAGES: Record<string, string> = {
   Seward: "/wta/hero-glacier-fjord.png",
   "New Orleans": "/swamp/hero-bayou.png",
   "Wisconsin Dells": "/dells/wisconsin-dells-boat-tour.png",
+  "Idaho Springs": "/markets/argo-shuttle.png",
 }
 
 export function PortsSection({ market, tours }: { market: Market; tours: Tour[] }) {

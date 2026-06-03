@@ -79,7 +79,7 @@ export const MARKETS: Record<string, Market> = {
     coords: { lat: 57.0531, lng: -135.33 },
     heroImage: "/markets/last-frontier.png",
     accentHue: 200,
-    status: "building",
+    status: "live",
     trust: [
       { label: "Hand-picked operators", note: "Only vetted, top-rated excursions" },
       { label: "Cruise-port timed", note: "Back before your ship departs" },
@@ -145,7 +145,7 @@ export const MARKETS: Record<string, Market> = {
     coords: { lat: 43.6275, lng: -89.771 },
     heroImage: "/markets/dells.png",
     accentHue: 95,
-    status: "building",
+    status: "live",
     trust: [
       { label: "Built for groups", note: "Plans that scale to the whole crew" },
       { label: "Family friendly", note: "Something for every age" },
@@ -198,7 +198,7 @@ export const MARKETS: Record<string, Market> = {
     coords: { lat: 39.7425, lng: -105.5136 },
     heroImage: "/markets/shuttleya.png",
     accentHue: 40,
-    status: "building",
+    status: "live",
     trust: [
       { label: "On-time pickups", note: "Reliable round-trip service" },
       { label: "Reserved seats", note: "Your spot is guaranteed" },
@@ -222,6 +222,32 @@ export function getMarket(id: string): Market | undefined {
 }
 
 export const ALL_MARKETS = Object.values(MARKETS)
+
+/**
+ * DOMAIN → MARKET ROUTING TABLE
+ * -----------------------------
+ * Maps every hostname (apex + www, plus known aliases) to its market id.
+ * The middleware uses this to rewrite "/" on a brand domain to "/s/{market}".
+ * Add new hostnames here when a market gets a domain or alias.
+ */
+export const DOMAIN_TO_MARKET: Record<string, string> = (() => {
+  const map: Record<string, string> = {}
+  for (const market of ALL_MARKETS) {
+    if (!market.domain) continue
+    const bare = market.domain.toLowerCase()
+    map[bare] = market.id
+    map[`www.${bare}`] = market.id
+  }
+  return map
+})()
+
+/** Resolve a request hostname to a market id, or undefined if unmapped. */
+export function getMarketIdForHost(host: string | null | undefined): string | undefined {
+  if (!host) return undefined
+  // Strip port and lowercase
+  const clean = host.split(":")[0].toLowerCase().trim()
+  return DOMAIN_TO_MARKET[clean]
+}
 
 /** The flagship market (used where a single default is needed). */
 export const FLAGSHIP_MARKET = MARKETS.alaska

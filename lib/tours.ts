@@ -299,7 +299,7 @@ export const TOURS: Tour[] = [
       "Cruise the Upper Dells past towering sandstone formations with guided shore landings at Witches Gulch and Stand Rock. An easy, scenic outing ideal for larger groups. Booked through our GetYourGuide partner.",
     durationHours: 2.5,
     priceFromCents: 4200,
-    image: "/dells/wisconsin-dells-boat-tour.png",
+    image: "/dells/upper-dells-shore-landing.png",
     highlights: ["Iconic sandstone gorges", "Guided shore landings", "Relaxed pace", "Group friendly"],
     groupSize: "Group friendly",
   },
@@ -438,7 +438,7 @@ export const TOURS: Tour[] = [
       "One shared shuttle, one job: catch the 10AM first run of the Mighty Argo Cable Car without driving, parking, or guessing your return. Depart Denver or Golden at 9:00 AM sharp, arrive for the first cable car run at 10:00 AM, and you're back in Denver by 12:30–12:45 PM. Seats are limited and departures can fill the night before. Reserve and pay on-site.",
     durationHours: 4,
     priceFromCents: 3500,
-    image: "",
+    image: "/markets/argo-shuttle.png",
     highlights: [
       "9:00 AM sharp departure",
       "Arrive for the 10AM first cable car run",
