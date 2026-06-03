@@ -15,6 +15,12 @@ export interface AvailabilitySlot {
   capacityRemaining: number
   /** Price per traveler in cents */
   priceCents: number
+  /**
+   * True for date-marker availability (e.g. Rezdy transfers), where the slot
+   * represents a bookable DATE rather than a specific departure time. The UI
+   * shows an "Available / Sold out" date chip instead of a clock time.
+   */
+  dateOnly?: boolean
 }
 
 export interface BookingCustomer {

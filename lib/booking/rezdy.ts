@@ -49,28 +49,35 @@ export const rezdyAdapter: BookingProviderAdapter = {
       console.log("[v0] Rezdy not configured — returning empty availability")
       return []
     }
+    // Rezdy requires "yyyy-MM-dd HH:mm:ss" — a bare date is rejected (HTTP 406).
     const params = new URLSearchParams({
       apiKey: cfg.apiKey,
       productCode,
-      startTimeLocal: fromISO.slice(0, 10),
-      endTimeLocal: toISO.slice(0, 10),
+      startTimeLocal: `${fromISO.slice(0, 10)} 00:00:00`,
+      endTimeLocal: `${toISO.slice(0, 10)} 23:59:59`,
     })
     try {
       const res = await fetch(`${cfg.base}/availability?${params.toString()}`, {
-        cache: "no-store",
+        next: { revalidate: 180 },
       })
       if (!res.ok) {
         console.log("[v0] Rezdy availability error:", res.status)
         return []
       }
       const data = (await res.json()) as { sessions?: RezdySession[] }
-      return (data.sessions ?? []).map((s) => ({
-        id: String(s.id),
-        startsAt: s.startTimeLocal,
-        label: formatLabel(s.startTimeLocal),
-        capacityRemaining: s.seatsAvailable ?? 0,
-        priceCents: Math.round((s.totalPrice ?? 0) * 100),
-      }))
+      return (data.sessions ?? []).map((s) => {
+        // Transfer-style products return a date marker at midnight rather than a
+        // real departure time. Flag those so the UI shows a date, not "12:00 AM".
+        const dateOnly = s.startTimeLocal.slice(11) === "00:00:00"
+        return {
+          id: String(s.id),
+          startsAt: s.startTimeLocal,
+          label: dateOnly ? formatDay(s.startTimeLocal) : formatLabel(s.startTimeLocal),
+          capacityRemaining: s.seatsAvailable ?? 0,
+          priceCents: Math.round((s.totalPrice ?? 0) * 100),
+          dateOnly,
+        }
+      })
     } catch (err) {
       console.log("[v0] Rezdy availability fetch failed:", (err as Error).message)
       return []
