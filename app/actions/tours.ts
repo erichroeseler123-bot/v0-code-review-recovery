@@ -20,7 +20,7 @@ export async function getTourImageUrl(tour: Tour): Promise<string | undefined> {
   try {
     const details = await fareHarborAdapter.getItemDetails?.(tour.providerRef, tour.providerCompany)
     return details?.imageUrl
-  } catch {
+  } catch (error) {
     return undefined
   }
 }
