@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   if (!API_KEY) return NextResponse.json({ error: "REZDY_API_KEY not set" }, { status: 500 })
 
   const body = await req.json()
-  const daysAhead = body.days ?? 60
+  const daysAhead = body.days ?? 730 // Default: 2 years (effectively "always available")
   const startHour = body.startHour ?? 6
   const endHour = body.endHour ?? 22
   const intervalMinutes = body.interval ?? 30
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const sessions = []
     const now = new Date()
 
-    // Generate 30-minute pickups for each day for the next N days
+    // Generate 30-minute pickups for each day for the next 2 years
     for (let d = 0; d < daysAhead; d++) {
       const date = new Date(now)
       date.setDate(date.getDate() + d)
