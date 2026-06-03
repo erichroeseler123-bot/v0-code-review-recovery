@@ -69,7 +69,7 @@ export const MARKETS: Record<string, Market> = {
     id: "last-frontier",
     name: "Last Frontier Shore Excursions",
     brand: "Last Frontier",
-    domain: "lastfrontiershore.com",
+    domain: "lastfrontiershoreexcursions.com",
     provider: "viator",
     onSiteCheckout: false,
     region: "Alaska",
