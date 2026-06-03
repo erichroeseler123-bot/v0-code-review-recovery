@@ -60,7 +60,6 @@ export const TOURS: Tour[] = [
       "Lift off from Juneau and fly over the vast Juneau Icefield before landing on Mendenhall Glacier itself. With crampons fitted and a certified guide leading the way, you'll walk among blue crevasses and meltwater pools high above the tree line. This is the single most requested shore excursion in Southeast Alaska.",
     durationHours: 3,
     priceFromCents: 54900,
-    image: "/wta/helicopter-glacier.png",
     highlights: [
       "Helicopter flightseeing over the Juneau Icefield",
       "Guided glacier walk with all gear provided",
@@ -83,7 +82,6 @@ export const TOURS: Tour[] = [
       "Take off from the water in a classic floatplane and soar over five named glaciers spilling out of the vast Juneau Icefield. From the air you'll see crevasse fields, meltwater pools, and snow-capped peaks no road can reach — then touch back down on the water at the harbor. A cruise-guest favorite that fits neatly inside a port day.",
     durationHours: 1.5,
     priceFromCents: 32900,
-    image: "/wta/hero-glacier-fjord.png",
     highlights: [
       "Floatplane flight over five glaciers",
       "Aerial views of the Juneau Icefield",
@@ -106,7 +104,6 @@ export const TOURS: Tour[] = [
       "Cruise the rich feeding grounds of Auke Bay aboard a heated, stabilized vessel built for wildlife viewing. Naturalist guides help you spot humpback whales bubble-net feeding, orca pods, sea lions, and bald eagles. We guarantee whale sightings — if you don't see one, you get a refund.",
     durationHours: 3.5,
     priceFromCents: 18900,
-    image: "/wta/whale-watching.png",
     highlights: [
       "Whale sighting guarantee",
       "Heated cabin and outdoor viewing decks",
@@ -127,7 +124,6 @@ export const TOURS: Tour[] = [
       "Climb nearly 3,000 feet in just 20 miles aboard vintage rail cars on one of the most scenic railways in the world. Built during the Klondike Gold Rush, the White Pass route carries you past waterfalls, gorges, and the original Trail of '98, with narration that brings the history to life.",
     durationHours: 4,
     priceFromCents: 15900,
-    image: "/wta/scenic-train.png",
     highlights: [
       "Historic narrow-gauge railway",
       "Panoramic gorge and waterfall views",
@@ -150,7 +146,6 @@ export const TOURS: Tour[] = [
       "Travel into the Tongass National Forest, the largest temperate rainforest in the country, to a protected salmon stream where black bears gather to feed. From elevated boardwalks, watch bears, eagles, and salmon in their natural habitat alongside an expert wildlife guide.",
     durationHours: 3,
     priceFromCents: 21900,
-    image: "/wta/bear-wildlife.png",
     highlights: [
       "Wild black bear viewing from safe boardwalks",
       "Old-growth rainforest setting",
@@ -171,7 +166,6 @@ export const TOURS: Tour[] = [
       "Cruise deep into Tracy Arm, a steep-walled fjord lined with waterfalls and floating ice, all the way to the face of Sawyer Glacier. Watch for harbor seals resting on icebergs and listen for the thunder of calving ice. A full-day signature experience for those who want the real Alaska.",
     durationHours: 6,
     priceFromCents: 24900,
-    image: "/wta/hero-glacier-fjord.png",
     highlights: [
       "Up-close tidewater glacier viewing",
       "Waterfalls and iceberg-filled fjord",
@@ -192,7 +186,6 @@ export const TOURS: Tour[] = [
       "Step back to 1898 on a guided walk through Skagway's historic district, part of the Klondike Gold Rush National Historical Park. Hear the stories of stampeders, saloons, and con men as you explore preserved storefronts and boardwalks just steps from the ship.",
     durationHours: 2,
     priceFromCents: 6900,
-    image: "/wta/port-town.png",
     highlights: [
       "Guided tour of the historic district",
       "National Historical Park sites",
