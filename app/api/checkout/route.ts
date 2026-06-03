@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       const providerRef = tour.providerRef ?? ""
       const dayStart = `${item.date}T00:00:00`
       const dayEnd = `${item.date}T23:59:59`
-      const slots = await adapter.getAvailability(providerRef, dayStart, dayEnd)
+      const slots = await adapter.getAvailability(providerRef, dayStart, dayEnd, tour.providerCompany)
 
       if (slots.length === 0) {
         return NextResponse.json(
@@ -71,12 +71,15 @@ export async function POST(req: NextRequest) {
       }
 
       const slot = slots[0]
-      const result = await adapter.createBooking({
-        tourId: providerRef,
-        availabilityId: slot.id,
-        travelers: item.travelers,
-        customer: body.contact,
-      })
+      const result = await adapter.createBooking(
+        {
+          tourId: providerRef,
+          availabilityId: slot.id,
+          travelers: item.travelers,
+          customer: body.contact,
+        },
+        tour.providerCompany,
+      )
 
       if (!result.ok || !result.bookingId) {
         return NextResponse.json({ ok: false, error: result.error ?? "Booking failed." }, { status: 502 })

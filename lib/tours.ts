@@ -24,6 +24,12 @@ export interface Tour {
    *  - viator/getyourguide: not used (see bookingUrl)
    */
   providerRef?: string
+  /**
+   * Operator company shortname for affiliate/agent resale. FareHarbor affiliates
+   * sell inventory that lives under each operator's own shortname
+   * (e.g. "coastalhelicopters"). Omit to use our own company shortname.
+   */
+  providerCompany?: string
   /** Affiliate deep link for handoff providers (viator / getyourguide) */
   bookingUrl?: string
   shortDescription: string
@@ -44,7 +50,9 @@ export const TOURS: Tour[] = [
     title: "Mendenhall Glacier Helicopter & Glacier Walk",
     location: "Juneau",
     category: "Flightseeing",
-    providerRef: "100001",
+    // Live FareHarbor inventory: TEMSCO Juneau "Mendenhall Glacier and Guided Walk"
+    providerCompany: "temscoair-juneau",
+    providerRef: "214803",
     shortDescription: "Soar over the icefield and step out onto a living glacier.",
     description:
       "Lift off from Juneau and fly over the vast Juneau Icefield before landing on Mendenhall Glacier itself. With crampons fitted and a certified guide leading the way, you'll walk among blue crevasses and meltwater pools high above the tree line. This is the single most requested shore excursion in Southeast Alaska.",
@@ -65,7 +73,9 @@ export const TOURS: Tour[] = [
     title: "5-Glacier Seaplane Flightseeing",
     location: "Juneau",
     category: "Flightseeing",
-    providerRef: "100007",
+    // Live FareHarbor inventory: Wings Airways "5-Glacier Seaplane Exploration"
+    providerCompany: "wingsairways",
+    providerRef: "256881",
     shortDescription: "Fly over five glaciers and the Juneau Icefield by floatplane.",
     description:
       "Take off from the water in a classic floatplane and soar over five named glaciers spilling out of the vast Juneau Icefield. From the air you'll see crevasse fields, meltwater pools, and snow-capped peaks no road can reach — then touch back down on the water at the harbor. A cruise-guest favorite that fits neatly inside a port day.",
@@ -86,7 +96,9 @@ export const TOURS: Tour[] = [
     title: "Juneau Whale Watching & Wildlife Cruise",
     location: "Juneau",
     category: "Wildlife",
-    providerRef: "100002",
+    // Live FareHarbor inventory: Dolphin Jet Boat Tours "Whale Watching Adventure"
+    providerRef: "2436",
+    providerCompany: "dolphintours",
     shortDescription: "Humpbacks, orcas, and eagles in the waters of Auke Bay.",
     description:
       "Cruise the rich feeding grounds of Auke Bay aboard a heated, stabilized vessel built for wildlife viewing. Naturalist guides help you spot humpback whales bubble-net feeding, orca pods, sea lions, and bald eagles. We guarantee whale sightings — if you don't see one, you get a refund.",
@@ -107,7 +119,7 @@ export const TOURS: Tour[] = [
     title: "White Pass & Yukon Route Scenic Railway",
     location: "Skagway",
     category: "Rail",
-    providerRef: "100003",
+    // Pending operator mapping (White Pass railway is not on FareHarbor)
     shortDescription: "Ride the historic gold-rush railway into the mountains.",
     description:
       "Climb nearly 3,000 feet in just 20 miles aboard vintage rail cars on one of the most scenic railways in the world. Built during the Klondike Gold Rush, the White Pass route carries you past waterfalls, gorges, and the original Trail of '98, with narration that brings the history to life.",
@@ -128,7 +140,9 @@ export const TOURS: Tour[] = [
     title: "Ketchikan Black Bear & Rainforest Wildlife Tour",
     location: "Ketchikan",
     category: "Wildlife",
-    providerRef: "100004",
+    // Live FareHarbor inventory: Taquan Air "Anan Creek Bear Adventure & Flightseeing" (seasonal, opens July)
+    providerRef: "560411",
+    providerCompany: "taquanair",
     shortDescription: "Watch wild black bears fish for salmon in the Tongass.",
     description:
       "Travel into the Tongass National Forest, the largest temperate rainforest in the country, to a protected salmon stream where black bears gather to feed. From elevated boardwalks, watch bears, eagles, and salmon in their natural habitat alongside an expert wildlife guide.",
@@ -149,7 +163,7 @@ export const TOURS: Tour[] = [
     title: "Tracy Arm Fjord & Sawyer Glacier Cruise",
     location: "Juneau",
     category: "Cruise",
-    providerRef: "100005",
+    // Pending operator mapping
     shortDescription: "Sail a narrow fjord to a tidewater glacier face.",
     description:
       "Cruise deep into Tracy Arm, a steep-walled fjord lined with waterfalls and floating ice, all the way to the face of Sawyer Glacier. Watch for harbor seals resting on icebergs and listen for the thunder of calving ice. A full-day signature experience for those who want the real Alaska.",
@@ -170,7 +184,7 @@ export const TOURS: Tour[] = [
     title: "Skagway Gold-Rush Historic Walking Tour",
     location: "Skagway",
     category: "Walking",
-    providerRef: "100006",
+    // Pending operator mapping
     shortDescription: "Walk the boardwalks of a preserved gold-rush town.",
     description:
       "Step back to 1898 on a guided walk through Skagway's historic district, part of the Klondike Gold Rush National Historical Park. Hear the stories of stampeders, saloons, and con men as you explore preserved storefronts and boardwalks just steps from the ship.",

@@ -44,8 +44,17 @@ export interface BookingProviderAdapter {
   onSiteCheckout: boolean
   /** Whether the provider's credentials are present in the environment */
   isConfigured(): boolean
-  getAvailability(tourId: string, fromISO: string, toISO: string): Promise<AvailabilitySlot[]>
-  createBooking(input: CreateBookingInput): Promise<BookingResult>
+  /**
+   * Live availability for an item. `operatorShortname` lets affiliate accounts
+   * resell inventory that lives under another operator's company shortname.
+   */
+  getAvailability(
+    tourId: string,
+    fromISO: string,
+    toISO: string,
+    operatorShortname?: string,
+  ): Promise<AvailabilitySlot[]>
+  createBooking(input: CreateBookingInput, operatorShortname?: string): Promise<BookingResult>
 }
 
 /** A single cart line as sent from the checkout form. */

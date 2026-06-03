@@ -49,7 +49,12 @@ export async function GET(req: Request) {
 
   const now = new Date()
   const to = new Date(now.getTime() + days * 24 * 60 * 60 * 1000)
-  const slots = await adapter.getAvailability(tour.providerRef!, now.toISOString(), to.toISOString())
+  const slots = await adapter.getAvailability(
+    tour.providerRef!,
+    now.toISOString(),
+    to.toISOString(),
+    tour.providerCompany,
+  )
 
   // Group slots by calendar date, marking sold-out windows honestly.
   const byDate: Record<string, { id: string; label: string; startsAt: string; capacityRemaining: number; soldOut: boolean; priceCents: number }[]> =

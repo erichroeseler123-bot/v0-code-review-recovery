@@ -22,8 +22,10 @@ const BASE = "https://fareharbor.com/api/external/v1"
 function getConfig() {
   const appKey = process.env.FAREHARBOR_API_APP_KEY
   const userKey = process.env.FAREHARBOR_API_USER_KEY
-  const shortname = process.env.FAREHARBOR_SHORTNAME
-  if (!appKey || !userKey || !shortname) return null
+  // Affiliate accounts don't need their own shortname — inventory lives under
+  // each operator's company shortname, supplied per-tour. Keep it as a fallback.
+  const shortname = process.env.FAREHARBOR_SHORTNAME ?? ""
+  if (!appKey || !userKey) return null
   return { appKey, userKey, shortname }
 }
 
@@ -41,12 +43,15 @@ function headers(cfg: { appKey: string; userKey: string }) {
 
 function formatLabel(startISO: string) {
   const d = new Date(startISO)
+  // Render in the operator's local Alaska time so guests see the real
+  // departure time, not the server's UTC clock.
   return d.toLocaleString("en-US", {
     weekday: "short",
     month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
+    timeZone: "America/Anchorage",
   })
 }
 
@@ -55,15 +60,18 @@ export const fareHarborAdapter: BookingProviderAdapter = {
   onSiteCheckout: true,
   isConfigured: isFareHarborConfigured,
 
-  async getAvailability(tourId, fromISO, toISO): Promise<AvailabilitySlot[]> {
+  async getAvailability(tourId, fromISO, toISO, operatorShortname): Promise<AvailabilitySlot[]> {
     const cfg = getConfig()
     if (!cfg) {
       console.log("[v0] FareHarbor not configured — returning empty availability")
       return []
     }
+    // Affiliates resell other operators' inventory: each item lives under its
+    // operator's shortname. Fall back to our own company shortname if none given.
+    const company = operatorShortname || cfg.shortname
     const from = fromISO.slice(0, 10)
     const to = toISO.slice(0, 10)
-    const url = `${BASE}/companies/${cfg.shortname}/items/${tourId}/availabilities/date_range/${from}/${to}/`
+    const url = `${BASE}/companies/${company}/items/${tourId}/availabilities/date-range/${from}/${to}/`
     try {
       const res = await fetch(url, { headers: headers(cfg), cache: "no-store" })
       if (!res.ok) {
@@ -87,12 +95,13 @@ export const fareHarborAdapter: BookingProviderAdapter = {
     }
   },
 
-  async createBooking(input: CreateBookingInput): Promise<BookingResult> {
+  async createBooking(input: CreateBookingInput, operatorShortname?: string): Promise<BookingResult> {
     const cfg = getConfig()
     if (!cfg) {
       return { ok: false, error: "FareHarbor is not configured yet." }
     }
-    const url = `${BASE}/companies/${cfg.shortname}/availabilities/${input.availabilityId}/bookings/`
+    const company = operatorShortname || cfg.shortname
+    const url = `${BASE}/companies/${company}/availabilities/${input.availabilityId}/bookings/`
     try {
       const res = await fetch(url, {
         method: "POST",
@@ -117,7 +126,7 @@ export const fareHarborAdapter: BookingProviderAdapter = {
       return {
         ok: true,
         bookingId: String(data.booking.pk),
-        confirmationUrl: `https://fareharbor.com/${cfg.shortname}/items/book/${data.booking.uuid}/`,
+        confirmationUrl: `https://fareharbor.com/${company}/items/book/${data.booking.uuid}/`,
       }
     } catch (err) {
       console.log("[v0] FareHarbor booking failed:", (err as Error).message)
