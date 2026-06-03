@@ -31,6 +31,8 @@ export interface RezdyProductDef {
   pickup: string
   /** Drop-off / destination */
   dropoff: string
+  /** Trip duration in minutes (Rezdy requires this; mirrors existing products) */
+  durationMinutes: number
 }
 
 /**
@@ -55,6 +57,7 @@ export const REZDY_PRODUCT_DEFS: RezdyProductDef[] = [
     maxUnits: 3,
     pickup: "Denver International Airport (DEN)",
     dropoff: "Breckenridge, CO",
+    durationMinutes: 150,
   },
   {
     slug: "denver-to-vail-private-suv",
@@ -68,6 +71,7 @@ export const REZDY_PRODUCT_DEFS: RezdyProductDef[] = [
     maxUnits: 3,
     pickup: "Denver International Airport (DEN)",
     dropoff: "Vail, CO",
+    durationMinutes: 150,
   },
   {
     slug: "denver-to-keystone-private-suv",
@@ -81,6 +85,7 @@ export const REZDY_PRODUCT_DEFS: RezdyProductDef[] = [
     maxUnits: 6,
     pickup: "Denver International Airport (DEN)",
     dropoff: "Keystone, CO",
+    durationMinutes: 120,
   },
   {
     slug: "denver-to-winter-park-private-suv",
@@ -94,6 +99,7 @@ export const REZDY_PRODUCT_DEFS: RezdyProductDef[] = [
     maxUnits: 3,
     pickup: "Denver International Airport (DEN)",
     dropoff: "Winter Park, CO",
+    durationMinutes: 150,
   },
   {
     slug: "denver-to-copper-mountain-private-suv",
@@ -107,6 +113,7 @@ export const REZDY_PRODUCT_DEFS: RezdyProductDef[] = [
     maxUnits: 6,
     pickup: "Denver International Airport (DEN)",
     dropoff: "Copper Mountain, CO",
+    durationMinutes: 120,
   },
   {
     slug: "denver-to-aspen-private-suv",
@@ -120,6 +127,7 @@ export const REZDY_PRODUCT_DEFS: RezdyProductDef[] = [
     maxUnits: 2,
     pickup: "Denver International Airport (DEN)",
     dropoff: "Aspen / Snowmass, CO",
+    durationMinutes: 240,
   },
   {
     slug: "denver-to-steamboat-springs-private-suv",
@@ -133,6 +141,7 @@ export const REZDY_PRODUCT_DEFS: RezdyProductDef[] = [
     maxUnits: 6,
     pickup: "Denver International Airport (DEN)",
     dropoff: "Steamboat Springs, CO",
+    durationMinutes: 240,
   },
   {
     slug: "denver-to-beaver-creek-private-suv",
@@ -146,6 +155,7 @@ export const REZDY_PRODUCT_DEFS: RezdyProductDef[] = [
     maxUnits: 3,
     pickup: "Denver International Airport (DEN)",
     dropoff: "Beaver Creek, CO",
+    durationMinutes: 160,
   },
 
   // ── Shuttleya: Mighty Argo Cable Car shared shuttle (priced per passenger) ──
@@ -161,6 +171,7 @@ export const REZDY_PRODUCT_DEFS: RezdyProductDef[] = [
     maxUnits: 14,
     pickup: "Denver or Golden, CO",
     dropoff: "Mighty Argo Cable Car, Idaho Springs, CO",
+    durationMinutes: 210,
   },
 ]
 
@@ -176,6 +187,7 @@ export function toRezdyProductPayload(def: RezdyProductDef) {
     description: def.description,
     productType: PRODUCT_TYPE,
     currency: CURRENCY,
+    durationMinutes: def.durationMinutes,
     advertisedPrice: def.priceCents / 100,
     // Our own stable reference so we can find these later in Rezdy.
     internalCode: def.slug,
