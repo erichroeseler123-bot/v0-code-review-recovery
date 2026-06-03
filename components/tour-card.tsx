@@ -7,25 +7,10 @@ import { useCart } from "@/components/cart-provider"
 import type { Market } from "@/lib/markets"
 import { formatPrice, type Tour } from "@/lib/tours"
 import { bookingHref } from "@/lib/links"
-import { getTourImageUrl } from "@/app/actions/tours"
-import { useEffect, useState } from "react"
 
 export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
   const { addItem } = useCart()
   const href = `/s/${market.id}/tours/${tour.slug}`
-  const [imageUrl, setImageUrl] = useState<string | undefined>(tour.image)
-  const [isLoading, setIsLoading] = useState(!tour.image && !!tour.providerRef)
-
-  // Fetch FareHarbor image if not provided in tour definition
-  useEffect(() => {
-    if (tour.image || !tour.providerRef) {
-      return // Already have image
-    }
-    getTourImageUrl(tour).then((url) => {
-      setImageUrl(url)
-      setIsLoading(false)
-    })
-  }, [tour])
 
   function quickAdd(e: React.MouseEvent) {
     e.preventDefault()
@@ -33,7 +18,7 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
       tourSlug: tour.slug,
       marketId: market.id,
       title: tour.title,
-      image: imageUrl || tour.image,
+      image: tour.image,
       port: tour.location,
       priceCents: tour.priceFromCents,
       travelers: 1,
@@ -43,14 +28,14 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
   return (
     <article className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-md">
       <Link href={href} className="relative block aspect-[4/3] overflow-hidden bg-muted">
-        {imageUrl || isLoading ? (
+        {tour.image ? (
           <Image
-            src={imageUrl || "/placeholder.svg"}
+            src={tour.image}
             alt={tour.title}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
-            onError={() => setImageUrl(undefined)}
+            priority={false}
           />
         ) : (
           <div className="flex h-full w-full flex-col justify-between bg-primary p-4">
@@ -62,7 +47,7 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
             </span>
           </div>
         )}
-        {imageUrl || isLoading ? (
+        {tour.image ? (
           <span className="absolute left-3 top-3 rounded-full bg-background/90 px-2.5 py-1 text-xs font-medium text-foreground">
             {tour.category}
           </span>

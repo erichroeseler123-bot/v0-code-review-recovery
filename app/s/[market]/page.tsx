@@ -7,6 +7,7 @@ import { TrustBar } from "@/components/trust-bar"
 import { PortsSection } from "@/components/ports-section"
 import { TourCard } from "@/components/tour-card"
 import { NearMe } from "@/components/near-me"
+import { enrichToursWithImages } from "@/app/actions/tours"
 
 export async function generateMetadata({
   params,
@@ -31,7 +32,13 @@ export default async function MarketHome({
   const market = getMarket(marketId)
   if (!market) notFound()
 
-  const tours = getToursByMarket(marketId)
+  let tours = getToursByMarket(marketId)
+  
+  // Fetch real images from FareHarbor API
+  if (market.provider === "fareharbor") {
+    tours = await enrichToursWithImages(tours)
+  }
+  
   const heroImage = market.heroImage || tours.find((t) => t.image)?.image
   const featured = tours.slice(0, 6)
 
