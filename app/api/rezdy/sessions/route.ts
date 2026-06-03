@@ -49,24 +49,25 @@ export async function POST(req: Request) {
   const results = []
   for (const session of sessions) {
     try {
-      const r = await fetch(`${baseUrl}/products/${productCode}/sessions`, {
+      const params = new URLSearchParams({ apiKey })
+      const url = `${baseUrl}/products/${productCode}/sessions?${params.toString()}`
+      console.log("[v0] sessions POST", url.slice(0, 80))
+      const r = await fetch(url, {
         method: "POST",
-        headers: {
-          "X-API-KEY": apiKey,
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(session),
       })
 
-      const data = (await r.json()) as { session?: { id?: number; startTimeLocal?: string } }
+      const data = (await r.json()) as { session?: { id?: number; startTimeLocal?: string }; error?: string }
       results.push({
         time: session.startTimeLocal,
         ok: r.ok,
         sessionId: r.ok ? data.session?.id : undefined,
         status: r.status,
+        error: r.ok ? undefined : data.error || (await r.text()).slice(0, 100),
       })
     } catch (err) {
-      results.push({ time: session.startTimeLocal, ok: false, error: String(err) })
+      results.push({ time: session.startTimeLocal, ok: false, error: String(err), status: -1 })
     }
   }
 
