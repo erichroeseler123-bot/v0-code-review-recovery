@@ -6,6 +6,7 @@ import { useCart } from "@/components/cart-provider"
 import type { Market } from "@/lib/markets"
 import { formatPrice, type Tour } from "@/lib/tours"
 import { bookingHref } from "@/lib/links"
+import { LiveAvailability } from "@/components/live-availability"
 
 const PROVIDER_LABEL: Record<string, string> = {
   viator: "Viator",
@@ -101,6 +102,10 @@ export function TourBookingPanel({ tour, market }: { tour: Tour; market: Market 
             <Plus className="h-4 w-4" />
           </button>
         </div>
+      </div>
+
+      <div className="mt-5 border-t border-border pt-4">
+        <LiveAvailability tourSlug={tour.slug} provider={market.provider} />
       </div>
 
       <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
