@@ -56,9 +56,35 @@ function formatLabel(startISO: string) {
 }
 
 export const fareHarborAdapter: BookingProviderAdapter = {
-  name: "fareharbor",
   onSiteCheckout: true,
   isConfigured: isFareHarborConfigured,
+
+  async getItemDetails(tourId: string, operatorShortname?: string) {
+    const cfg = getConfig()
+    if (!cfg) {
+      return null
+    }
+    const company = operatorShortname || cfg.shortname
+    const url = `${BASE}/companies/${company}/items/${tourId}/`
+    try {
+      const res = await fetch(url, { headers: headers(cfg), next: { revalidate: 3600 } })
+      if (!res.ok) return null
+      const data = (await res.json()) as {
+        name?: string
+        description?: string
+        photo_url?: string
+        photo?: { image_url?: string; large?: string }
+      }
+      return {
+        title: data.name || "",
+        description: data.description || "",
+        imageUrl:
+          data.photo_url || data.photo?.large || data.photo?.image_url || undefined,
+      }
+    } catch {
+      return null
+    }
+  },
 
   async getAvailability(tourId, fromISO, toISO, operatorShortname): Promise<AvailabilitySlot[]> {
     const cfg = getConfig()

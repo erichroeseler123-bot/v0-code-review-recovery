@@ -1,3 +1,5 @@
+import { fareHarborAdapter } from "@/lib/booking/fareharbor"
+
 export type TourCategory =
   | "Flightseeing"
   | "Wildlife"
@@ -460,9 +462,27 @@ export function portsForMarket(marketId: string): string[] {
 }
 
 export function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-  }).format(cents / 100)
+  return `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 0 })}`
+}
+
+/**
+ * Fetch tour image from FareHarbor API if it's a FareHarbor tour.
+ * FareHarbor tours have providerRef and providerCompany set.
+ */
+export async function getTourImageUrl(tour: Tour): Promise<string | undefined> {
+  if (tour.image || !tour.providerRef) {
+    return tour.image || undefined
+  }
+
+  // Only fetch FareHarbor images; other providers use static images
+  if (!tour.providerCompany) {
+    return undefined
+  }
+
+  try {
+    const details = await fareHarborAdapter.getItemDetails?.(tour.providerRef, tour.providerCompany)
+    return details?.imageUrl
+  } catch {
+    return undefined
+  }
 }

@@ -45,11 +45,15 @@ export interface BookingResult {
 }
 
 export interface BookingProviderAdapter {
-  name: string
+  name?: string
   /** Whether checkout/payment happens on our own site */
   onSiteCheckout: boolean
   /** Whether the provider's credentials are present in the environment */
   isConfigured(): boolean
+  /**
+   * Fetch tour/item details including images. Optional; only FareHarbor uses it.
+   */
+  getItemDetails?(tourId: string, operatorShortname?: string): Promise<{ title: string; description: string; imageUrl?: string } | null>
   /**
    * Live availability for an item. `operatorShortname` lets affiliate accounts
    * resell inventory that lives under another operator's company shortname.
