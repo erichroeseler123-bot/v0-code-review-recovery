@@ -10,7 +10,7 @@ const PORT_IMAGES: Record<string, string> = {
   Ketchikan: "/wta/ketchikan.png",
   Sitka: "/last-frontier/glacier-bay-kayaking.png",
   Seward: "/wta/hero-glacier-fjord.png",
-  "New Orleans": "/nola/honey-island-swamp.png",
+  "New Orleans": "/swamp/hero-bayou.png",
   "Wisconsin Dells": "/dells/wisconsin-dells-boat-tour.png",
 }
 
