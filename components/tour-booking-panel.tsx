@@ -17,7 +17,7 @@ const PROVIDER_LABEL: Record<string, string> = {
 
 export function TourBookingPanel({ tour, market }: { tour: Tour; market: Market }) {
   const { addItem, setOpen } = useCart()
-  const [travelers, setTravelers] = useState(2)
+  const [travelers, setTravelers] = useState(1)
   const [added, setAdded] = useState(false)
 
   function add() {
