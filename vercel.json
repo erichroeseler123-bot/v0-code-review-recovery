@@ -1,12 +1,5 @@
 {
-  "framework": "nextjs",
-  "buildCommand": "pnpm exec next build",
-  "installCommand": "pnpm install --frozen-lockfile",
-  "devCommand": "pnpm exec next dev",
-  "env": {
-    "BETTER_AUTH_SECRET": { "required": false },
-    "DATABASE_URL": { "required": false },
-    "FAREHARBOR_API_KEY": { "required": false }
-  }
+  "framework": "nextjs"
 }
+
 
