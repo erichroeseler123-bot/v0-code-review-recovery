@@ -36,7 +36,13 @@ function formatDay(date: string) {
   return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })
 }
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
+  // FareHarbor start times carry the operator's Alaska offset; render in Alaska
+  // time so the displayed time matches the actual departure.
+  return new Date(iso).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "America/Anchorage",
+  })
 }
 
 export function LiveAvailability({
@@ -49,7 +55,7 @@ export function LiveAvailability({
   onPick?: (slot: Slot) => void
 }) {
   const { data, isLoading } = useSWR<AvailabilityResponse>(
-    `/api/availability?tour=${tourSlug}&days=45`,
+    `/api/availability?tour=${tourSlug}&days=14`,
     fetcher,
     { revalidateOnFocus: false },
   )

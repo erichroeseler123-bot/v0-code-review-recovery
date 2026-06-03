@@ -73,7 +73,10 @@ export const fareHarborAdapter: BookingProviderAdapter = {
     const to = toISO.slice(0, 10)
     const url = `${BASE}/companies/${company}/items/${tourId}/availabilities/date-range/${from}/${to}/`
     try {
-      const res = await fetch(url, { headers: headers(cfg), cache: "no-store" })
+      // Cache live availability for a few minutes: FareHarbor's date-range
+      // endpoint is slow over wide windows, and the final seat is re-checked
+      // at checkout anyway. Keeps the storefront snappy without going stale.
+      const res = await fetch(url, { headers: headers(cfg), next: { revalidate: 180 } })
       if (!res.ok) {
         console.log("[v0] FareHarbor availability error:", res.status)
         return []
