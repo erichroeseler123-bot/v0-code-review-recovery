@@ -11,6 +11,7 @@ interface Slot {
   capacityRemaining: number
   soldOut: boolean
   priceCents: number
+  dateOnly?: boolean
 }
 interface DateGroup {
   date: string
@@ -96,7 +97,7 @@ export function LiveAvailability({
   if (dates.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-border bg-secondary/40 p-3 text-sm text-muted-foreground">
-        No live departures in the next 45 days. Add to cart and we&apos;ll confirm the next opening.
+        No live departures in the next 14 days. Add to cart and we&apos;ll confirm the next opening.
       </div>
     )
   }
@@ -127,12 +128,14 @@ export function LiveAvailability({
                   title={
                     s.soldOut
                       ? "Sold out"
-                      : `${s.capacityRemaining} spots left · ${formatPrice(s.priceCents)}`
+                      : `${s.capacityRemaining} spots left${
+                          s.priceCents ? ` · ${formatPrice(s.priceCents)}` : ""
+                        }`
                   }
                 >
-                  {formatTime(s.startsAt)}
+                  {s.dateOnly ? (s.soldOut ? "Sold out" : "Available") : formatTime(s.startsAt)}
                   {s.soldOut ? (
-                    <span className="ml-1 text-[10px] uppercase">Sold out</span>
+                    !s.dateOnly && <span className="ml-1 text-[10px] uppercase">Sold out</span>
                   ) : (
                     <span className="ml-1 text-[10px] text-muted-foreground">
                       {s.capacityRemaining} left

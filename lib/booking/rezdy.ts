@@ -38,6 +38,16 @@ function formatLabel(startISO: string) {
   })
 }
 
+function formatDay(startISO: string) {
+  // Date-only marker (transfers): show just the day, no clock time.
+  const [y, m, d] = startISO.slice(0, 10).split("-").map(Number)
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  })
+}
+
 export const rezdyAdapter: BookingProviderAdapter = {
   name: "rezdy",
   onSiteCheckout: true,
