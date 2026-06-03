@@ -33,13 +33,25 @@ export interface RezdyProductDef {
   dropoff: string
   /** Trip duration in minutes (Rezdy requires this; mirrors existing products) */
   durationMinutes: number
+  /**
+   * Rezdy product type used at CREATION time. The API refuses to create
+   * TRANSFER products, so private vehicle transfers are created as
+   * PRIVATE_TOUR and the shared Argo shuttle as ACTIVITY. Defaults to
+   * PRIVATE_TOUR when omitted.
+   */
+  productType?: "PRIVATE_TOUR" | "ACTIVITY"
 }
 
 /**
  * Rezdy product types: ACTIVITY, DAYTOUR, MULTIDAYTOUR, PRIVATE_TOUR, TICKET,
- * RENTAL, GIFT_CARD, TRANSFER, LESSON, EVENT. Airport transfers use TRANSFER.
+ * RENTAL, GIFT_CARD, TRANSFER, LESSON, EVENT.
+ *
+ * NOTE: Rezdy's API refuses to create TRANSFER products ("Can not create this
+ * product type using API yet"), so we create private transfers as PRIVATE_TOUR
+ * and the shared Argo shuttle as ACTIVITY. The customer-facing storefront still
+ * presents them as transfers/shuttles via lib/tours.ts.
  */
-const PRODUCT_TYPE = "TRANSFER"
+const DEFAULT_PRODUCT_TYPE = "PRIVATE_TOUR"
 const CURRENCY = "USD"
 
 export const REZDY_PRODUCT_DEFS: RezdyProductDef[] = [
@@ -172,6 +184,7 @@ export const REZDY_PRODUCT_DEFS: RezdyProductDef[] = [
     pickup: "Denver or Golden, CO",
     dropoff: "Mighty Argo Cable Car, Idaho Springs, CO",
     durationMinutes: 210,
+    productType: "ACTIVITY",
   },
 ]
 
@@ -185,7 +198,7 @@ export function toRezdyProductPayload(def: RezdyProductDef) {
     name: def.name,
     shortDescription: def.shortDescription,
     description: def.description,
-    productType: PRODUCT_TYPE,
+    productType: def.productType ?? DEFAULT_PRODUCT_TYPE,
     currency: CURRENCY,
     durationMinutes: def.durationMinutes,
     advertisedPrice: def.priceCents / 100,
