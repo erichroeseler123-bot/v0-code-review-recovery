@@ -27,7 +27,7 @@ export function SiteHeader({ market }: { market: Market }) {
 
         <nav className="hidden items-center gap-6 md:flex">
           <Link href={`${base}/tours`} className="text-sm text-foreground/80 transition-colors hover:text-foreground">
-            {market.provider === "rezdy" || market.provider === "fareharbor" ? "All Tours" : "Browse"}
+            {market.provider === "custom" || market.provider === "fareharbor" ? "All Tours" : "Browse"}
           </Link>
           {ports.map((port) => (
             <Link

@@ -7,7 +7,7 @@ import { NearMe } from "@/components/near-me"
 
 const PROVIDER_LABEL: Record<BookingProvider, string> = {
   fareharbor: "FareHarbor",
-  rezdy: "Rezdy",
+  custom: "Direct Booking",
   viator: "Viator",
   getyourguide: "GetYourGuide",
 }

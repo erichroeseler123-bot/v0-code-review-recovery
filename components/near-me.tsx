@@ -17,7 +17,7 @@ import { Next48Hours } from "@/components/next-48-hours"
 
 const PROVIDER_LABEL: Record<BookingProvider, string> = {
   fareharbor: "Books on-site",
-  rezdy: "Books on-site",
+  custom: "Books on-site",
   viator: "Booked via Viator",
   getyourguide: "Booked via GetYourGuide",
 }

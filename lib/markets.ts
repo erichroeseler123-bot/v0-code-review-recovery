@@ -7,12 +7,12 @@
  *
  * Booking providers:
  *  - "fareharbor"   : on-site cart + checkout via FareHarbor API
- *  - "rezdy"        : on-site cart + checkout via Rezdy API
+ *  - "custom"       : custom booking system (Neon database, Stripe checkout)
  *  - "viator"       : affiliate handoff (Viator takes payment)
  *  - "getyourguide" : affiliate handoff (GetYourGuide takes payment)
  */
 
-export type BookingProvider = "fareharbor" | "rezdy" | "viator" | "getyourguide"
+export type BookingProvider = "fareharbor" | "custom" | "viator" | "getyourguide"
 
 export type MarketStatus = "live" | "building" | "protected"
 
@@ -136,7 +136,7 @@ export const MARKETS: Record<string, Market> = {
     name: "GoSno",
     brand: "GoSno",
     domain: "gosno.co",
-    provider: "rezdy",
+    provider: "custom",
     onSiteCheckout: true,
     region: "Colorado",
     tagline: "Private Denver airport rides to Colorado resorts",
@@ -167,7 +167,7 @@ export const MARKETS: Record<string, Market> = {
     name: "Shuttleya",
     brand: "Shuttleya",
     domain: "shuttleya.com",
-    provider: "rezdy",
+    provider: "custom",
     onSiteCheckout: true,
     region: "Colorado",
     tagline: "Shuttle service to the Mighty Argo Cable Car",

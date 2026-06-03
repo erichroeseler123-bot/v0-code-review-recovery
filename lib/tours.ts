@@ -302,14 +302,13 @@ export const TOURS: Tour[] = [
     groupSize: "Group friendly",
   },
 
-  // ─────────────────────── GOSNO (Rezdy, on-site) ───────────────────────
+  // ─────────────────────── GOSNO (Custom booking system, on-site) ───────────────────────
   {
     slug: "denver-to-breckenridge-private-suv",
     marketId: "gosno",
     title: "Denver Airport → Breckenridge Private SUV",
     location: "Breckenridge",
     category: "Transport",
-    providerRef: "PB1CE8",
     shortDescription: "Private airport transfer for ski weekends and direct arrivals.",
     description:
       "A private 4WD SUV picks you up curbside at DEN and drives your group straight to Breckenridge — flight tracking included, room for ski bags and winter luggage, and your return to Denver booked at the same time. Reserved and paid on-site.",
@@ -325,7 +324,6 @@ export const TOURS: Tour[] = [
     title: "Denver Airport → Vail Private SUV",
     location: "Vail",
     category: "Transport",
-    providerRef: "PXFGPP",
     shortDescription: "Longer resort transfer with timing handled before you land.",
     description:
       "Private transportation from Denver International to Vail, built for travelers who want the logistics solved before they arrive. Flight tracking, ski-gear space, and a pre-booked return ride to Denver. Reserved and paid on-site.",
@@ -341,7 +339,6 @@ export const TOURS: Tour[] = [
     title: "Denver Airport → Keystone Private SUV",
     location: "Keystone",
     category: "Transport",
-    providerRef: "P9PQRN",
     shortDescription: "Simple Summit County transfer with direct drop-off.",
     description:
       "A clean Summit County transfer from DEN to Keystone with room for ski gear, curbside airport pickup, and direct drop-off at your lodging. Return ride booked at the same time. Reserved and paid on-site.",
@@ -357,7 +354,6 @@ export const TOURS: Tour[] = [
     title: "Denver Airport → Winter Park Private SUV",
     location: "Winter Park",
     category: "Transport",
-    providerRef: "P360K5",
     shortDescription: "Clean Winter Park transport for couples, families, and weekends.",
     description:
       "Private Winter Park transportation from Denver International for couples, families, and weekend ski trips. Flight tracking, gear space, and a pre-booked return to Denver. Reserved and paid on-site.",
@@ -373,7 +369,6 @@ export const TOURS: Tour[] = [
     title: "Denver Airport → Copper Mountain Private SUV",
     location: "Copper Mountain",
     category: "Transport",
-    providerRef: "PHCYQL",
     shortDescription: "Private rides into Copper with no parking or rental-car stress.",
     description:
       "Private transportation into Copper Mountain from DEN — no parking stress, no rental-car guessing. Flight tracking, ski-gear room, and a return ride booked up front. Reserved and paid on-site.",
@@ -389,7 +384,6 @@ export const TOURS: Tour[] = [
     title: "Denver Airport → Aspen Private SUV",
     location: "Aspen",
     category: "Transport",
-    providerRef: "P11TWN",
     shortDescription: "Premium long-distance transfer for Aspen and Snowmass trips.",
     description:
       "Premium long-distance private transportation for Aspen and Snowmass trips that need direct control. Flight tracking, gear space, and a pre-booked return to Denver. Reserved and paid on-site.",
@@ -405,7 +399,6 @@ export const TOURS: Tour[] = [
     title: "Denver Airport → Steamboat Springs Private SUV",
     location: "Steamboat Springs",
     category: "Transport",
-    providerRef: "PEZN8V",
     shortDescription: "Long-route transfer with direct ride options for Steamboat.",
     description:
       "A long-route airport transfer with direct private ride options for Steamboat Springs arrivals and return trips. Flight tracking, ski-gear space, and a return booked in advance. Reserved and paid on-site.",
@@ -421,7 +414,6 @@ export const TOURS: Tour[] = [
     title: "Denver Airport → Beaver Creek Private SUV",
     location: "Beaver Creek",
     category: "Transport",
-    providerRef: "P9AP71",
     shortDescription: "Private resort transportation for smoother premium arrivals.",
     description:
       "Private resort transportation built for smoother, premium arrivals into Beaver Creek from Denver International. Flight tracking, gear space, and a pre-booked return ride. Reserved and paid on-site.",
@@ -432,14 +424,13 @@ export const TOURS: Tour[] = [
     groupSize: "Up to 6 + luggage",
   },
 
-  // ─────────────────────── SHUTTLEYA (Rezdy, on-site) ───────────────────────
+  // ─────────────────────── SHUTTLEYA (Custom booking system, on-site) ───────────────────────
   {
     slug: "argo-cable-car-shuttle",
     marketId: "shuttleya",
     title: "9AM Argo Express — Mighty Argo Cable Car Shuttle",
     location: "Idaho Springs",
     category: "Transport",
-    providerRef: "PJQSR2",
     shortDescription: "$35 round-trip from Denver or Golden, timed to the first cable car.",
     description:
       "One shared shuttle, one job: catch the 10AM first run of the Mighty Argo Cable Car without driving, parking, or guessing your return. Depart Denver or Golden at 9:00 AM sharp, arrive for the first cable car run at 10:00 AM, and you're back in Denver by 12:30–12:45 PM. Seats are limited and departures can fill the night before. Reserve and pay on-site.",
