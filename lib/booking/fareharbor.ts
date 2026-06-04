@@ -59,6 +59,7 @@ function formatLabel(startISO: string) {
 type FareHarborPhoto = {
   url?: string
   image_url?: string
+  image_cdn_url?: string
   photo_url?: string
   large?: string
   medium?: string
@@ -77,6 +78,7 @@ type FareHarborItemDetails = {
   item?: {
     name?: string
     description?: string
+    image_cdn_url?: string
     photo_url?: string
     photo?: { image_url?: string; large?: string }
     photos?: FareHarborPhoto[]
@@ -89,6 +91,7 @@ function firstPhotoUrl(photos?: FareHarborPhoto[]) {
     const url =
       photo.url ||
       photo.image_url ||
+      photo.image_cdn_url ||
       photo.photo_url ||
       photo.large ||
       photo.medium ||
@@ -106,6 +109,7 @@ function getFareHarborImageUrl(data: FareHarborItemDetails) {
     data.photo_url ||
     data.photo?.large ||
     data.photo?.image_url ||
+    item?.image_cdn_url ||
     item?.photo_url ||
     item?.photo?.large ||
     item?.photo?.image_url ||
