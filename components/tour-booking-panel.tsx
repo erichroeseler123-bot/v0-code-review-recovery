@@ -1,12 +1,17 @@
 "use client"
 
 import { useState } from "react"
-import { Check, ExternalLink, Minus, Plus } from "lucide-react"
+import { Check, ExternalLink, MessageSquare, Minus, Phone, Plus } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
 import type { Market } from "@/lib/markets"
 import { formatPrice, type Tour } from "@/lib/tours"
 import { bookingHref } from "@/lib/links"
 import { LiveAvailability } from "@/components/live-availability"
+import { GoSnoQuoteForm } from "@/components/gosno-quote-form"
+
+const GOSNO_PHONE = "720-369-6292"
+const GOSNO_SMS = "7203696292"
+const GOSNO_EMAIL = "contact@gosno.co"
 
 const PROVIDER_LABEL: Record<string, string> = {
   viator: "Viator",
@@ -19,6 +24,7 @@ export function TourBookingPanel({ tour, market }: { tour: Tour; market: Market 
   const { addItem, setOpen } = useCart()
   const [travelers, setTravelers] = useState(1)
   const [added, setAdded] = useState(false)
+  const [showQuoteForm, setShowQuoteForm] = useState(false)
 
   function add() {
     addItem({
@@ -33,6 +39,66 @@ export function TourBookingPanel({ tour, market }: { tour: Tour; market: Market 
     setOpen(true)
     setAdded(true)
     setTimeout(() => setAdded(false), 1800)
+  }
+
+  if (market.id === "gosno") {
+    return (
+      <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+        <div className="flex items-baseline justify-between gap-4">
+          <div>
+            <span className="text-sm text-muted-foreground">From</span>
+            <p className="font-serif text-3xl font-semibold text-foreground">
+              {formatPrice(tour.priceFromCents)}
+            </p>
+            <span className="text-xs text-muted-foreground">per vehicle estimate</span>
+          </div>
+          <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
+            Quote request
+          </span>
+        </div>
+
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+          Send your trip details and GoSno will follow up with availability and a custom quote.
+          This is not an instant booking or payment.
+        </p>
+
+        <div className="mt-5 grid gap-2">
+          <button
+            type="button"
+            onClick={() => setShowQuoteForm((open) => !open)}
+            className="w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Request a Quote
+          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <a
+              href={`tel:${GOSNO_SMS}`}
+              className="inline-flex items-center justify-center gap-1.5 rounded-md border border-border px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+            >
+              <Phone className="h-4 w-4" />
+              Call
+            </a>
+            <a
+              href={`sms:${GOSNO_SMS}`}
+              className="inline-flex items-center justify-center gap-1.5 rounded-md border border-border px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+            >
+              <MessageSquare className="h-4 w-4" />
+              Text
+            </a>
+          </div>
+        </div>
+
+        <p className="mt-3 text-center text-xs text-muted-foreground">
+          Call or text {GOSNO_PHONE}, email {GOSNO_EMAIL}, or send the form below.
+        </p>
+
+        {showQuoteForm && (
+          <div className="mt-5 border-t border-border pt-5">
+            <GoSnoQuoteForm tour={tour} />
+          </div>
+        )}
+      </div>
+    )
   }
 
   // Handoff providers: book on the partner's site.
