@@ -4,8 +4,9 @@ import Image from "next/image"
 import Link from "next/link"
 import { MapPin, Clock, Users, Check, CalendarClock, Route } from "lucide-react"
 import { getMarket } from "@/lib/markets"
-import { TOURS, getTour, formatDuration, getDepartures } from "@/lib/tours"
+import { TOURS, getTour, formatDuration, getDepartures, hasVerifiedProductImage } from "@/lib/tours"
 import { TourBookingPanel } from "@/components/tour-booking-panel"
+import { enrichTourImage } from "@/app/actions/tours"
 
 export function generateStaticParams() {
   return TOURS.map((t) => ({ market: t.marketId, slug: t.slug }))
@@ -33,8 +34,10 @@ export default async function TourPage({
 }) {
   const { market: marketId, slug } = await params
   const market = getMarket(marketId)
-  const tour = getTour(slug)
-  if (!market || !tour || tour.marketId !== marketId) notFound()
+  const baseTour = getTour(slug)
+  if (!market || !baseTour || baseTour.marketId !== marketId) notFound()
+  const tour = market.provider === "fareharbor" ? await enrichTourImage(baseTour) : baseTour
+  const hasProductImage = hasVerifiedProductImage(tour)
 
   return (
     <article className="mx-auto max-w-6xl px-4 py-8 md:py-12">
@@ -45,10 +48,10 @@ export default async function TourPage({
       <div className="mt-4 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
-            {tour.image ? (
+            {hasProductImage ? (
               <Image
-                src={tour.image || "/placeholder.svg"}
-                alt={tour.title}
+                src={tour.image}
+                alt={tour.imageAlt || tour.title}
                 fill
                 className="object-cover"
                 priority

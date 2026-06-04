@@ -11,6 +11,8 @@ export type TourCategory =
   | "Transport"
   | "Group"
 
+export type TourImageSourceType = "provider" | "operator" | "owned" | "generic" | "unverified"
+
 export interface Tour {
   slug: string
   /** Which market/storefront this tour belongs to */
@@ -40,12 +42,26 @@ export interface Tour {
   priceFromCents: number
   /** Empty string => card renders a designed typographic tile */
   image: string
+  imageSourceType?: TourImageSourceType
+  imageVerified?: boolean
+  isGenericDestinationImage?: boolean
+  imageAlt?: string
   highlights: string[]
   groupSize: string
   /** Approx one-way road distance in miles (transfers). Renders a distance chip. */
   distanceMiles?: number
   /** Short scheduling note, e.g. "Pickup timed to your flight · 24/7". */
   pickupNote?: string
+}
+
+export function hasVerifiedProductImage(tour: Tour): boolean {
+  return Boolean(
+    tour.image &&
+      tour.imageVerified === true &&
+      (tour.imageSourceType === "provider" ||
+        tour.imageSourceType === "operator" ||
+        tour.imageSourceType === "owned"),
+  )
 }
 
 /** Human duration: 1.75 => "1h 45m", 3 => "3h". */

@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { getMarket } from "@/lib/markets"
 import { getToursByMarket } from "@/lib/tours"
 import { ToursBrowser } from "@/components/tours-browser"
+import { enrichToursWithImages } from "@/app/actions/tours"
 
 export async function generateMetadata({
   params,
@@ -30,7 +31,11 @@ export default async function MarketToursPage({
   const market = getMarket(marketId)
   if (!market) notFound()
 
-  const tours = getToursByMarket(marketId)
+  let tours = getToursByMarket(marketId)
+
+  if (market.provider === "fareharbor") {
+    tours = await enrichToursWithImages(tours)
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
