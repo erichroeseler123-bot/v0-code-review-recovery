@@ -7,11 +7,10 @@ import type { Market } from "@/lib/markets"
 import { formatPrice, type Tour } from "@/lib/tours"
 import { bookingHref } from "@/lib/links"
 import { LiveAvailability } from "@/components/live-availability"
-import { GoSnoQuoteForm } from "@/components/gosno-quote-form"
+import { GoSnoRezdyBooking } from "@/components/gosno-rezdy-booking"
 
 const GOSNO_PHONE = "720-369-6292"
 const GOSNO_SMS = "7203696292"
-const GOSNO_EMAIL = "contact@gosno.co"
 
 const PROVIDER_LABEL: Record<string, string> = {
   viator: "Viator",
@@ -24,7 +23,7 @@ export function TourBookingPanel({ tour, market }: { tour: Tour; market: Market 
   const { addItem, setOpen } = useCart()
   const [travelers, setTravelers] = useState(1)
   const [added, setAdded] = useState(false)
-  const [showQuoteForm, setShowQuoteForm] = useState(false)
+  const [showRezdyBooking, setShowRezdyBooking] = useState(false)
 
   function add() {
     addItem({
@@ -53,22 +52,22 @@ export function TourBookingPanel({ tour, market }: { tour: Tour; market: Market 
             <span className="text-xs text-muted-foreground">per vehicle estimate</span>
           </div>
           <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
-            Quote request
+            Rezdy booking
           </span>
         </div>
 
         <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-          Send your trip details and GoSno will follow up with availability and a custom quote.
-          This is not an instant booking or payment.
+          Book online through Rezdy. Choose your vehicle, date, and pickup time in the secure
+          Rezdy booking widget.
         </p>
 
         <div className="mt-5 grid gap-2">
           <button
             type="button"
-            onClick={() => setShowQuoteForm((open) => !open)}
+            onClick={() => setShowRezdyBooking((open) => !open)}
             className="w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Request a Quote
+            Book Online
           </button>
           <div className="grid grid-cols-2 gap-2">
             <a
@@ -89,12 +88,12 @@ export function TourBookingPanel({ tour, market }: { tour: Tour; market: Market 
         </div>
 
         <p className="mt-3 text-center text-xs text-muted-foreground">
-          Call or text {GOSNO_PHONE}, email {GOSNO_EMAIL}, or send the form below.
+          Online bookings are confirmed in Rezdy. You can also call or text {GOSNO_PHONE}.
         </p>
 
-        {showQuoteForm && (
+        {showRezdyBooking && (
           <div className="mt-5 border-t border-border pt-5">
-            <GoSnoQuoteForm tour={tour} />
+            <GoSnoRezdyBooking />
           </div>
         )}
       </div>

@@ -91,7 +91,7 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
               href={href}
               className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              Quote
+              Book Online
             </Link>
           ) : market.onSiteCheckout ? (
             <button
