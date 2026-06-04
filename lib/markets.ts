@@ -10,9 +10,12 @@
  *  - "custom"       : custom booking system (Neon database, Stripe checkout)
  *  - "viator"       : affiliate handoff (Viator takes payment)
  *  - "getyourguide" : affiliate handoff (GetYourGuide takes payment)
+ *  - "partner"      : tracked handoff to a sibling site we own that runs the
+ *                     conversion/checkout (e.g. Somerset → shuttle site). DCC
+ *                     owns the decision/guide pages; the partner site converts.
  */
 
-export type BookingProvider = "fareharbor" | "custom" | "viator" | "getyourguide"
+export type BookingProvider = "fareharbor" | "custom" | "viator" | "getyourguide" | "partner"
 
 export type MarketStatus = "live" | "building" | "protected"
 
@@ -204,6 +207,31 @@ export const MARKETS: Record<string, Market> = {
       { label: "Reserved seats", note: "Your spot is guaranteed" },
       { label: "Easy online booking", note: "Reserve in under a minute" },
       { label: "Local drivers", note: "They know the canyon" },
+    ],
+  },
+  somerset: {
+    id: "somerset",
+    name: "St. Croix Valley Guide",
+    brand: "St. Croix Valley",
+    // Intentionally empty: Somerset is a network-internal decision/guide layer.
+    // The shuttle conversion site (shuttletosomersetamphitheater.com) stays SEPARATE
+    // per doctrine — DCC owns the guide pages, the shuttle site converts.
+    domain: "",
+    provider: "partner",
+    onSiteCheckout: false,
+    region: "St. Croix Valley, WI/MN",
+    tagline: "Plan your night in the St. Croix Valley — Somerset, Hudson & Stillwater",
+    scope: "What should I do in the St. Croix Valley, and how do I get to the show?",
+    ports: ["Somerset", "Hudson", "Stillwater", "Apple River"],
+    coords: { lat: 45.1247, lng: -92.6754 },
+    heroImage: "/markets/somerset.png",
+    accentHue: 150,
+    status: "building",
+    trust: [
+      { label: "Local-first picks", note: "Real valley spots, not filler" },
+      { label: "Show-night ready", note: "Plan the venue run end to end" },
+      { label: "Tracked handoff", note: "Sends you to the right booking site" },
+      { label: "Group-friendly", note: "Built for crews and trips" },
     ],
   },
 }

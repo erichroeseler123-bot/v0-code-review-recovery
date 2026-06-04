@@ -567,6 +567,58 @@ export const TOURS: Tour[] = [
     highlights: ["Whale sighting guarantee", "Naturalist guide on board", "Heated enclosed vessel", "Port-day timed"],
     groupSize: "Up to 30",
   },
+
+  // ─────────────── ST. CROIX VALLEY / SOMERSET (partner handoff — DCC guide layer) ───────────────
+  // DCC owns these decision/guide pages. The shuttle entry hands off to the SEPARATE
+  // conversion site (shuttletosomersetamphitheater.com) with tracked UTM attribution.
+  {
+    slug: "somerset-amphitheater-shuttle",
+    marketId: "somerset",
+    title: "Shuttle to Somerset Amphitheater",
+    location: "Somerset",
+    category: "Transport",
+    bookingUrl: "https://shuttletosomersetamphitheater.com",
+    shortDescription: "Skip the parking and the post-show traffic — ride to the show.",
+    description:
+      "The cleanest way to do a show night at Somerset Amphitheater: reserve a round-trip shuttle and skip the parking lot, the walk, and the post-show traffic crawl. Booking and payment are handled on our dedicated shuttle site — this guide just points you to the right place.",
+    durationHours: 5,
+    priceFromCents: 4500,
+    image: "/somerset/amphitheater-shuttle.png",
+    highlights: ["Round-trip to the venue", "No parking or traffic", "Group-friendly", "Booked on the shuttle site"],
+    groupSize: "Groups welcome",
+  },
+  {
+    slug: "apple-river-tubing-day",
+    marketId: "somerset",
+    title: "Apple River Tubing Day",
+    location: "Apple River",
+    category: "Adventure",
+    bookingUrl: "https://shuttletosomersetamphitheater.com",
+    shortDescription: "Float the Apple River — the classic Somerset summer day.",
+    description:
+      "The signature Somerset summer outing: float the Apple River with your crew, sun and water all afternoon. Use this guide to plan your day, then book tubes and transport through our partner so you're not driving and parking twice.",
+    durationHours: 4,
+    priceFromCents: 3000,
+    image: "/somerset/apple-river-tubing.png",
+    highlights: ["Classic river float", "Built for groups", "Plan the whole day", "Partner booking"],
+    groupSize: "Groups welcome",
+  },
+  {
+    slug: "stillwater-riverfront-evening",
+    marketId: "somerset",
+    title: "Stillwater Riverfront Evening",
+    location: "Stillwater",
+    category: "Walking",
+    bookingUrl: "https://shuttletosomersetamphitheater.com",
+    shortDescription: "Dinner, patios, and the lift bridge in historic Stillwater.",
+    description:
+      "Make a night of it in historic Stillwater: riverfront patios, local restaurants, and the iconic lift bridge over the St. Croix. A self-guided evening plan for couples and groups — pair it with a show or a river day for the full St. Croix Valley weekend.",
+    durationHours: 3,
+    priceFromCents: 0,
+    image: "/somerset/stillwater-riverfront.png",
+    highlights: ["Riverfront dining", "Historic downtown", "Lift bridge views", "Self-guided plan"],
+    groupSize: "Couples & groups",
+  },
 ]
 
 export function getTour(slug: string): Tour | undefined {
@@ -582,5 +634,6 @@ export function portsForMarket(marketId: string): string[] {
 }
 
 export function formatPrice(cents: number): string {
+  if (cents <= 0) return "Free"
   return `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 0 })}`
 }

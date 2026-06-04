@@ -32,3 +32,5 @@ function makeHandoffAdapter(name: string): BookingProviderAdapter {
 
 export const viatorAdapter = makeHandoffAdapter("viator")
 export const getYourGuideAdapter = makeHandoffAdapter("getyourguide")
+/** Tracked handoff to a sibling conversion site we own (e.g. Somerset → shuttle site). */
+export const partnerAdapter = makeHandoffAdapter("partner")

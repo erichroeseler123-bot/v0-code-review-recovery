@@ -1,7 +1,7 @@
 import type { BookingProvider } from "@/lib/markets"
 import type { BookingProviderAdapter } from "./types"
 import { fareHarborAdapter } from "./fareharbor"
-import { viatorAdapter, getYourGuideAdapter } from "./handoff"
+import { viatorAdapter, getYourGuideAdapter, partnerAdapter } from "./handoff"
 
 /** Resolve the booking adapter for a given provider. */
 export function getAdapter(provider: BookingProvider): BookingProviderAdapter {
@@ -12,6 +12,8 @@ export function getAdapter(provider: BookingProvider): BookingProviderAdapter {
       return viatorAdapter
     case "getyourguide":
       return getYourGuideAdapter
+    case "partner":
+      return partnerAdapter
     case "custom":
       throw new Error("Custom booking provider is handled via server actions, not adapters")
     default:
