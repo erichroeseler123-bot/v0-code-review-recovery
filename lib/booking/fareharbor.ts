@@ -55,6 +55,67 @@ function formatLabel(startISO: string) {
   })
 }
 
+type FareHarborPhoto = {
+  url?: string
+  image_url?: string
+  photo_url?: string
+  large?: string
+  medium?: string
+  original?: string
+  image?: { url?: string }
+  photo?: { url?: string }
+}
+
+type FareHarborItemDetails = {
+  name?: string
+  description?: string
+  photo_url?: string
+  photo?: { image_url?: string; large?: string }
+  photos?: FareHarborPhoto[]
+  images?: FareHarborPhoto[]
+  item?: {
+    name?: string
+    description?: string
+    photo_url?: string
+    photo?: { image_url?: string; large?: string }
+    photos?: FareHarborPhoto[]
+    images?: FareHarborPhoto[]
+  }
+}
+
+function firstPhotoUrl(photos?: FareHarborPhoto[]) {
+  for (const photo of photos ?? []) {
+    const url =
+      photo.url ||
+      photo.image_url ||
+      photo.photo_url ||
+      photo.large ||
+      photo.medium ||
+      photo.original ||
+      photo.image?.url ||
+      photo.photo?.url
+    if (url) return url
+  }
+  return undefined
+}
+
+function getFareHarborImageUrl(data: FareHarborItemDetails) {
+  const item = data.item
+  return (
+    data.photo_url ||
+    data.photo?.large ||
+    data.photo?.image_url ||
+    item?.photo_url ||
+    item?.photo?.large ||
+    item?.photo?.image_url ||
+    firstPhotoUrl(item?.photos) ||
+    firstPhotoUrl(item?.images) ||
+    firstPhotoUrl(data.photos) ||
+    firstPhotoUrl(data.images) ||
+    undefined
+  )
+}
+
 export const fareHarborAdapter: BookingProviderAdapter = {
   onSiteCheckout: true,
   isConfigured: isFareHarborConfigured,
@@ -69,17 +130,12 @@ export const fareHarborAdapter: BookingProviderAdapter = {
     try {
       const res = await fetch(url, { headers: headers(cfg), next: { revalidate: 3600 } })
       if (!res.ok) return null
-      const data = (await res.json()) as {
-        name?: string
-        description?: string
-        photo_url?: string
-        photo?: { image_url?: string; large?: string }
-      }
+      const data = (await res.json()) as FareHarborItemDetails
+      const item = data.item
       return {
-        title: data.name || "",
-        description: data.description || "",
-        imageUrl:
-          data.photo_url || data.photo?.large || data.photo?.image_url || undefined,
+        title: item?.name || data.name || "",
+        description: item?.description || data.description || "",
+        imageUrl: getFareHarborImageUrl(data),
       }
     } catch {
       return null
