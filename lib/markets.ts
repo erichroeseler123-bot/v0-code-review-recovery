@@ -176,7 +176,7 @@ export const MARKETS: Record<string, Market> = {
     coords: { lat: 39.7392, lng: -104.9903 },
     heroImage: "/markets/gosno.png",
     accentHue: 250,
-    status: "building",
+    status: "live",
     trust: [
       { label: "Private, not shared", note: "Your group, your vehicle" },
       { label: "4WD mountain-ready", note: "Built for Colorado weather" },
