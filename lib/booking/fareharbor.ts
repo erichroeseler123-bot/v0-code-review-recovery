@@ -18,6 +18,7 @@ import type {
  */
 
 const BASE = "https://fareharbor.com/api/external/v1"
+const ITEM_DETAILS_TIMEOUT_MS = 2000
 
 function getConfig() {
   const appKey = process.env.FAREHARBOR_API_APP_KEY
@@ -127,8 +128,14 @@ export const fareHarborAdapter: BookingProviderAdapter = {
     }
     const company = operatorShortname || cfg.shortname
     const url = `${BASE}/companies/${company}/items/${tourId}/`
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), ITEM_DETAILS_TIMEOUT_MS)
     try {
-      const res = await fetch(url, { headers: headers(cfg), next: { revalidate: 3600 } })
+      const res = await fetch(url, {
+        headers: headers(cfg),
+        next: { revalidate: 3600 },
+        signal: controller.signal,
+      })
       if (!res.ok) return null
       const data = (await res.json()) as FareHarborItemDetails
       const item = data.item
@@ -139,6 +146,8 @@ export const fareHarborAdapter: BookingProviderAdapter = {
       }
     } catch {
       return null
+    } finally {
+      clearTimeout(timeout)
     }
   },
 
