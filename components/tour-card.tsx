@@ -2,10 +2,10 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Clock, ExternalLink, MapPin, Plus } from "lucide-react"
+import { CalendarClock, Clock, ExternalLink, MapPin, Plus } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
 import type { Market } from "@/lib/markets"
-import { formatPrice, type Tour } from "@/lib/tours"
+import { formatPrice, formatDuration, getDepartures, type Tour } from "@/lib/tours"
 import { bookingHref } from "@/lib/links"
 
 export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
@@ -62,9 +62,15 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
           </span>
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
-            {tour.durationHours} hrs
+            {formatDuration(tour.durationHours)}
+            {tour.distanceMiles ? ` \u00b7 ${tour.distanceMiles} mi` : ""}
           </span>
         </div>
+
+        <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-primary">
+          <CalendarClock className="h-3.5 w-3.5 shrink-0" />
+          <span className="truncate">{getDepartures(tour)}</span>
+        </p>
 
         <Link href={href} className="mt-2">
           <h3 className="font-serif text-lg font-semibold leading-snug text-foreground text-balance">

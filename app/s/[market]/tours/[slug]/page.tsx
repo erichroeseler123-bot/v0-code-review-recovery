@@ -2,9 +2,9 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { MapPin, Clock, Users, Check } from "lucide-react"
+import { MapPin, Clock, Users, Check, CalendarClock, Route } from "lucide-react"
 import { getMarket } from "@/lib/markets"
-import { TOURS, getTour } from "@/lib/tours"
+import { TOURS, getTour, formatDuration, getDepartures } from "@/lib/tours"
 import { TourBookingPanel } from "@/components/tour-booking-panel"
 
 export function generateStaticParams() {

@@ -42,6 +42,45 @@ export interface Tour {
   image: string
   highlights: string[]
   groupSize: string
+  /** Approx one-way road distance in miles (transfers). Renders a distance chip. */
+  distanceMiles?: number
+  /** Short scheduling note, e.g. "Pickup timed to your flight · 24/7". */
+  pickupNote?: string
+}
+
+/** Human duration: 1.75 => "1h 45m", 3 => "3h". */
+export function formatDuration(hours: number): string {
+  const h = Math.floor(hours)
+  const m = Math.round((hours - h) * 60)
+  if (h === 0) return `${m}m`
+  return m === 0 ? `${h}h` : `${h}h ${m}m`
+}
+
+/** Pickup / departure times — explicit pickupNote, or a sensible default per category. */
+export function getDepartures(tour: Tour): string {
+  if (tour.pickupNote) return tour.pickupNote
+  switch (tour.category) {
+    case "Transport":
+      return "Pickup timed to your flight \u00b7 runs 24/7"
+    case "Flightseeing":
+      return "Daily \u00b7 8:00 AM, 10:30 AM & 1:00 PM"
+    case "Wildlife":
+      return "Daily \u00b7 8:00 AM & 1:30 PM"
+    case "Cruise":
+      return "Daily \u00b7 9:00 AM & 2:00 PM"
+    case "Rail":
+      return "Daily \u00b7 8:15 AM & 12:45 PM"
+    case "Walking":
+      return "Daily \u00b7 10:00 AM & 2:00 PM"
+    case "Swamp":
+      return "Daily \u00b7 9:00 AM, 12:00 PM & 3:00 PM"
+    case "Adventure":
+      return "Daily \u00b7 9:00 AM & 1:00 PM"
+    case "Group":
+      return "Daily \u00b7 10:00 AM & 2:30 PM"
+    default:
+      return "Daily departures"
+  }
 }
 
 export const TOURS: Tour[] = [
@@ -316,7 +355,9 @@ export const TOURS: Tour[] = [
       "A private 4WD SUV picks you up curbside at DEN and drives your group straight to Breckenridge — flight tracking included, room for ski bags and winter luggage, and your return to Denver booked at the same time. Reserved and paid on-site.",
     durationHours: 2,
     priceFromCents: 44900,
-    image: "/gosno/breckenridge.png",
+    image: "/gosno/suburban.jpg",
+    distanceMiles: 104,
+    pickupNote: "Pickup timed to your flight · 24/7",
     highlights: ["Private door-to-door", "Flight tracking included", "Room for ski gear", "Round-trip planning"],
     groupSize: "Up to 6 + luggage",
   },
@@ -329,9 +370,11 @@ export const TOURS: Tour[] = [
     shortDescription: "Longer resort transfer with timing handled before you land.",
     description:
       "Private transportation from Denver International to Vail, built for travelers who want the logistics solved before they arrive. Flight tracking, ski-gear space, and a pre-booked return ride to Denver. Reserved and paid on-site.",
-    durationHours: 2.5,
+    durationHours: 2,
     priceFromCents: 44900,
-    image: "/gosno/vail.png",
+    image: "/gosno/suburban.jpg",
+    distanceMiles: 120,
+    pickupNote: "Pickup timed to your flight · 24/7",
     highlights: ["Private door-to-door", "Flight tracking included", "Room for ski gear", "Round-trip planning"],
     groupSize: "Up to 6 + luggage",
   },
@@ -344,9 +387,11 @@ export const TOURS: Tour[] = [
     shortDescription: "Simple Summit County transfer with direct drop-off.",
     description:
       "A clean Summit County transfer from DEN to Keystone with room for ski gear, curbside airport pickup, and direct drop-off at your lodging. Return ride booked at the same time. Reserved and paid on-site.",
-    durationHours: 2,
+    durationHours: 1.75,
     priceFromCents: 34900,
-    image: "/gosno/keystone.png",
+    image: "/gosno/suburban.jpg",
+    distanceMiles: 95,
+    pickupNote: "Pickup timed to your flight · 24/7",
     highlights: ["Private door-to-door", "Flight tracking included", "Room for ski gear", "Round-trip planning"],
     groupSize: "Up to 6 + luggage",
   },
@@ -359,9 +404,11 @@ export const TOURS: Tour[] = [
     shortDescription: "Clean Winter Park transport for couples, families, and weekends.",
     description:
       "Private Winter Park transportation from Denver International for couples, families, and weekend ski trips. Flight tracking, gear space, and a pre-booked return to Denver. Reserved and paid on-site.",
-    durationHours: 2,
+    durationHours: 1.75,
     priceFromCents: 34900,
-    image: "/gosno/winter-park.png",
+    image: "/gosno/suburban.jpg",
+    distanceMiles: 85,
+    pickupNote: "Pickup timed to your flight · 24/7",
     highlights: ["Private door-to-door", "Flight tracking included", "Room for ski gear", "Round-trip planning"],
     groupSize: "Up to 6 + luggage",
   },
@@ -374,9 +421,11 @@ export const TOURS: Tour[] = [
     shortDescription: "Private rides into Copper with no parking or rental-car stress.",
     description:
       "Private transportation into Copper Mountain from DEN — no parking stress, no rental-car guessing. Flight tracking, ski-gear room, and a return ride booked up front. Reserved and paid on-site.",
-    durationHours: 2,
+    durationHours: 1.83,
     priceFromCents: 44900,
-    image: "/gosno/copper-mountain.png",
+    image: "/gosno/suburban.jpg",
+    distanceMiles: 100,
+    pickupNote: "Pickup timed to your flight · 24/7",
     highlights: ["Private door-to-door", "Flight tracking included", "Room for ski gear", "Round-trip planning"],
     groupSize: "Up to 6 + luggage",
   },
@@ -389,9 +438,11 @@ export const TOURS: Tour[] = [
     shortDescription: "Premium long-distance transfer for Aspen and Snowmass trips.",
     description:
       "Premium long-distance private transportation for Aspen and Snowmass trips that need direct control. Flight tracking, gear space, and a pre-booked return to Denver. Reserved and paid on-site.",
-    durationHours: 4,
+    durationHours: 3.75,
     priceFromCents: 69900,
-    image: "/gosno/aspen.png",
+    image: "/gosno/suburban.jpg",
+    distanceMiles: 200,
+    pickupNote: "Pickup timed to your flight · 24/7",
     highlights: ["Private door-to-door", "Flight tracking included", "Room for ski gear", "Round-trip planning"],
     groupSize: "Up to 6 + luggage",
   },
@@ -404,9 +455,11 @@ export const TOURS: Tour[] = [
     shortDescription: "Long-route transfer with direct ride options for Steamboat.",
     description:
       "A long-route airport transfer with direct private ride options for Steamboat Springs arrivals and return trips. Flight tracking, ski-gear space, and a return booked in advance. Reserved and paid on-site.",
-    durationHours: 3.5,
+    durationHours: 3,
     priceFromCents: 69900,
-    image: "/gosno/steamboat-springs.png",
+    image: "/gosno/suburban.jpg",
+    distanceMiles: 157,
+    pickupNote: "Pickup timed to your flight · 24/7",
     highlights: ["Private door-to-door", "Flight tracking included", "Room for ski gear", "Round-trip planning"],
     groupSize: "Up to 6 + luggage",
   },
@@ -419,9 +472,11 @@ export const TOURS: Tour[] = [
     shortDescription: "Private resort transportation for smoother premium arrivals.",
     description:
       "Private resort transportation built for smoother, premium arrivals into Beaver Creek from Denver International. Flight tracking, gear space, and a pre-booked return ride. Reserved and paid on-site.",
-    durationHours: 2.5,
+    durationHours: 2.25,
     priceFromCents: 44900,
-    image: "/gosno/beaver-creek.png",
+    image: "/gosno/suburban.jpg",
+    distanceMiles: 135,
+    pickupNote: "Pickup timed to your flight · 24/7",
     highlights: ["Private door-to-door", "Flight tracking included", "Room for ski gear", "Round-trip planning"],
     groupSize: "Up to 6 + luggage",
   },
