@@ -12,6 +12,8 @@ const tours = readFileSync("lib/tours.ts", "utf8")
 assert.doesNotMatch(fallback, /next\/image|<img\b|<Image\b/)
 assert.doesNotMatch(fallback, /https?:\/\//)
 assert.doesNotMatch(fallback, /wikimedia|commons|unsplash|pexels|stock photo|ai-generated/i)
+assert.doesNotMatch(fallback, /Field note|Product details/)
+assert.doesNotMatch(fallback, /MapPin|Route/)
 assert.match(fallback, /market: Market/)
 assert.match(fallback, /tour: Tour/)
 
