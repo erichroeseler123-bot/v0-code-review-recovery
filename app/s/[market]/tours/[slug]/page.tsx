@@ -7,6 +7,7 @@ import { getMarket } from "@/lib/markets"
 import { TOURS, getTour, formatDuration, getDepartures, hasVerifiedProductImage } from "@/lib/tours"
 import { TourBookingPanel } from "@/components/tour-booking-panel"
 import { enrichTourImage } from "@/app/actions/tours"
+import { ProductVisualFallback } from "@/components/product-visual-fallback"
 
 export function generateStaticParams() {
   return TOURS.map((t) => ({ market: t.marketId, slug: t.slug }))
@@ -58,14 +59,7 @@ export default async function TourPage({
                 sizes="(min-width: 1024px) 60vw, 100vw"
               />
             ) : (
-              <div className="flex h-full w-full flex-col justify-between bg-primary p-6">
-                <span className="text-sm font-medium uppercase tracking-[0.18em] text-primary-foreground/80">
-                  {tour.location}
-                </span>
-                <span className="font-serif text-4xl font-semibold leading-tight text-primary-foreground text-balance">
-                  {tour.title}
-                </span>
-              </div>
+              <ProductVisualFallback market={market} tour={tour} className="p-6 sm:p-8" />
             )}
           </div>
 
