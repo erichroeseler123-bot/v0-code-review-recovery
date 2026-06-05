@@ -7,6 +7,7 @@ import { useCart } from "@/components/cart-provider"
 import type { Market } from "@/lib/markets"
 import { formatPrice, formatDuration, getDepartures, hasVerifiedProductImage, type Tour } from "@/lib/tours"
 import { bookingHref, hasConnectedBookingUrl } from "@/lib/links"
+import { ProductVisualFallback } from "@/components/product-visual-fallback"
 
 export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
   const { addItem } = useCart()
@@ -40,14 +41,7 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
             priority={false}
           />
         ) : (
-          <div className="flex h-full w-full flex-col justify-between bg-primary p-4">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-primary-foreground/80">
-              {tour.location}
-            </span>
-            <span className="font-serif text-2xl font-semibold leading-tight text-primary-foreground text-balance">
-              {tour.category}
-            </span>
-          </div>
+          <ProductVisualFallback market={market} tour={tour} />
         )}
         {hasProductImage ? (
           <span className="absolute left-3 top-3 rounded-full bg-background/90 px-2.5 py-1 text-xs font-medium text-foreground">
