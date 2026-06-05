@@ -4,9 +4,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { MapPin, Clock, Users, Check, CalendarClock, Route } from "lucide-react"
 import { getMarket } from "@/lib/markets"
-import { TOURS, getTour, formatDuration, getDepartures, hasVerifiedProductImage } from "@/lib/tours"
+import { TOURS, getTour, formatDuration, getDepartures, getProductCoverImage, getVerifiedProductImages } from "@/lib/tours"
 import { TourBookingPanel } from "@/components/tour-booking-panel"
-import { enrichTourImage } from "@/app/actions/tours"
 import { ProductVisualFallback } from "@/components/product-visual-fallback"
 
 export function generateStaticParams() {
@@ -35,10 +34,10 @@ export default async function TourPage({
 }) {
   const { market: marketId, slug } = await params
   const market = getMarket(marketId)
-  const baseTour = getTour(slug)
-  if (!market || !baseTour || baseTour.marketId !== marketId) notFound()
-  const tour = market.provider === "fareharbor" ? await enrichTourImage(baseTour) : baseTour
-  const hasProductImage = hasVerifiedProductImage(tour)
+  const tour = getTour(slug)
+  if (!market || !tour || tour.marketId !== marketId) notFound()
+  const coverImage = getProductCoverImage(tour)
+  const galleryImages = getVerifiedProductImages(tour)
 
   return (
     <article className="mx-auto max-w-6xl px-4 py-8 md:py-12">
@@ -49,10 +48,10 @@ export default async function TourPage({
       <div className="mt-4 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
-            {hasProductImage ? (
+            {coverImage ? (
               <Image
-                src={tour.image}
-                alt={tour.imageAlt || tour.title}
+                src={coverImage.storedImageUrl}
+                alt={coverImage.imageAlt}
                 fill
                 className="object-cover"
                 priority
@@ -62,6 +61,22 @@ export default async function TourPage({
               <ProductVisualFallback market={market} tour={tour} className="p-6 sm:p-8" />
             )}
           </div>
+
+          {galleryImages.length > 1 ? (
+            <div className="mt-3 grid grid-cols-3 gap-3">
+              {galleryImages.slice(1, 4).map((image) => (
+                <div key={image.storedImageUrl} className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                  <Image
+                    src={image.storedImageUrl}
+                    alt={image.imageAlt}
+                    fill
+                    sizes="(min-width: 1024px) 18vw, 33vw"
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          ) : null}
 
           <div className="mt-6">
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">

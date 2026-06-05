@@ -12,6 +12,19 @@ export type TourCategory =
   | "Group"
 
 export type TourImageSourceType = "provider" | "operator" | "owned" | "generic" | "unverified"
+export type ProductImageUsage = "cover" | "card" | "gallery" | "detail" | "feature"
+
+export interface ProductImage {
+  providerImageUrl?: string
+  storedImageUrl: string
+  imageSourceType: "provider" | "operator" | "owned"
+  imageVerified: true
+  imageAlt: string
+  imageAttribution?: string
+  imageFetchedAt?: string
+  sortOrder?: number
+  usage?: ProductImageUsage[]
+}
 
 export interface Tour {
   slug: string
@@ -46,6 +59,7 @@ export interface Tour {
   imageVerified?: boolean
   isGenericDestinationImage?: boolean
   imageAlt?: string
+  productImages?: ProductImage[]
   highlights: string[]
   groupSize: string
   /** Approx one-way road distance in miles (transfers). Renders a distance chip. */
@@ -55,13 +69,39 @@ export interface Tour {
 }
 
 export function hasVerifiedProductImage(tour: Tour): boolean {
+  return Boolean(getProductCoverImage(tour))
+}
+
+function isVerifiedStoredProductImage(image: ProductImage | undefined): image is ProductImage {
   return Boolean(
-    tour.image &&
-      tour.imageVerified === true &&
-      (tour.imageSourceType === "provider" ||
-        tour.imageSourceType === "operator" ||
-        tour.imageSourceType === "owned"),
+    image?.storedImageUrl &&
+      image.imageVerified === true &&
+      (image.imageSourceType === "provider" ||
+        image.imageSourceType === "operator" ||
+        image.imageSourceType === "owned"),
   )
+}
+
+export function getVerifiedProductImages(tour: Tour): ProductImage[] {
+  return (tour.productImages ?? [])
+    .filter(isVerifiedStoredProductImage)
+    .sort((a, b) => (a.sortOrder ?? 999) - (b.sortOrder ?? 999))
+}
+
+export function getProductImageForUsage(tour: Tour, usage: ProductImageUsage): ProductImage | undefined {
+  return getVerifiedProductImages(tour).find((image) => image.usage?.includes(usage))
+}
+
+export function getProductCoverImage(tour: Tour): ProductImage | undefined {
+  return (
+    getProductImageForUsage(tour, "cover") ??
+    getProductImageForUsage(tour, "card") ??
+    getVerifiedProductImages(tour)[0]
+  )
+}
+
+export function getProductFeatureImage(tour: Tour): ProductImage | undefined {
+  return getProductImageForUsage(tour, "feature") ?? getProductCoverImage(tour)
 }
 
 /** Human duration: 1.75 => "1h 45m", 3 => "3h". */

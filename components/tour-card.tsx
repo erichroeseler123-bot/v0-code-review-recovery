@@ -5,14 +5,14 @@ import Link from "next/link"
 import { CalendarClock, Clock, ExternalLink, MapPin, Plus } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
 import type { Market } from "@/lib/markets"
-import { formatPrice, formatDuration, getDepartures, hasVerifiedProductImage, type Tour } from "@/lib/tours"
+import { formatPrice, formatDuration, getDepartures, getProductCoverImage, type Tour } from "@/lib/tours"
 import { bookingHref, hasConnectedBookingUrl } from "@/lib/links"
 import { ProductVisualFallback } from "@/components/product-visual-fallback"
 
 export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
   const { addItem } = useCart()
   const href = `/s/${market.id}/tours/${tour.slug}`
-  const hasProductImage = hasVerifiedProductImage(tour)
+  const coverImage = getProductCoverImage(tour)
   const hasProductBookingUrl = hasConnectedBookingUrl(tour)
 
   function quickAdd(e: React.MouseEvent) {
@@ -21,7 +21,7 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
       tourSlug: tour.slug,
       marketId: market.id,
       title: tour.title,
-      image: hasProductImage ? tour.image : "",
+      image: coverImage?.storedImageUrl ?? "",
       port: tour.location,
       priceCents: tour.priceFromCents,
       travelers: 1,
@@ -31,10 +31,10 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
   return (
     <article className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-md">
       <Link href={href} className="relative block aspect-[4/3] overflow-hidden bg-muted">
-        {hasProductImage ? (
+        {coverImage ? (
           <Image
-            src={tour.image}
-            alt={tour.imageAlt || tour.title}
+            src={coverImage.storedImageUrl}
+            alt={coverImage.imageAlt}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -43,7 +43,7 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
         ) : (
           <ProductVisualFallback market={market} tour={tour} />
         )}
-        {hasProductImage ? (
+        {coverImage ? (
           <span className="absolute left-3 top-3 rounded-full bg-background/90 px-2.5 py-1 text-xs font-medium text-foreground">
             {tour.category}
           </span>

@@ -17,19 +17,20 @@ assert.doesNotMatch(fallback, /MapPin|Route/)
 assert.match(fallback, /market: Market/)
 assert.match(fallback, /tour: Tour/)
 
-assert.match(card, /hasVerifiedProductImage\(tour\)/)
+assert.match(card, /getProductCoverImage\(tour\)/)
 assert.match(card, /import \{ ProductVisualFallback \}/)
 assert.match(card, /<ProductVisualFallback market=\{market\} tour=\{tour\} \/>/)
 
-assert.match(detail, /hasVerifiedProductImage\(tour\)/)
+assert.match(detail, /getProductCoverImage\(tour\)/)
 assert.match(detail, /import \{ ProductVisualFallback \}/)
 assert.match(detail, /<ProductVisualFallback market=\{market\} tour=\{tour\}/)
 
 assert.match(tours, /export function hasVerifiedProductImage/)
-assert.match(tours, /tour\.imageVerified === true/)
-assert.match(tours, /tour\.imageSourceType === "provider"/)
-assert.match(tours, /tour\.imageSourceType === "operator"/)
-assert.match(tours, /tour\.imageSourceType === "owned"/)
+assert.match(tours, /return Boolean\(getProductCoverImage\(tour\)\)/)
+assert.match(tours, /image\.imageVerified === true/)
+assert.match(tours, /image\.imageSourceType === "provider"/)
+assert.match(tours, /image\.imageSourceType === "operator"/)
+assert.match(tours, /image\.imageSourceType === "owned"/)
 
 const tourObjects = tours.match(/\{\n\s+slug:\s+"[^"]+"[\s\S]*?\n\s+\},/g) ?? []
 for (const tour of tourObjects) {
