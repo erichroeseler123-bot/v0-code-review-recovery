@@ -11,10 +11,14 @@ export interface CartItem {
   /** Display label for the location (port / town / pickup) */
   port: string
   priceCents: number
+  lineTotalCents?: number
   travelers: number
-  /** Selected availability, set at checkout time */
+  /** Selected WTA/FareHarbor availability and ticket types. */
   availabilityId?: string
+  selectedDate?: string
+  startsAt?: string
   dateLabel?: string
+  customerTypeRates?: { id: string; label: string; quantity: number; totalCents: number }[]
 }
 
 interface CartContextValue {
@@ -58,11 +62,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = useCallback((item: CartItem) => {
     setItems((prev) => {
-      const existing = prev.find((i) => i.tourSlug === item.tourSlug)
+      const existing = prev.find(
+        (i) =>
+          i.tourSlug === item.tourSlug &&
+          i.availabilityId === item.availabilityId &&
+          i.selectedDate === item.selectedDate,
+      )
       if (existing) {
         return prev.map((i) =>
-          i.tourSlug === item.tourSlug
-            ? { ...i, travelers: i.travelers + item.travelers }
+          i.tourSlug === item.tourSlug &&
+          i.availabilityId === item.availabilityId &&
+          i.selectedDate === item.selectedDate
+            ? {
+                ...i,
+                travelers: i.travelers + item.travelers,
+                lineTotalCents: (i.lineTotalCents ?? i.priceCents * i.travelers) + (item.lineTotalCents ?? item.priceCents * item.travelers),
+              }
             : i,
         )
       }
@@ -86,7 +101,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clear = useCallback(() => setItems([]), [])
 
   const count = items.reduce((n, i) => n + i.travelers, 0)
-  const subtotalCents = items.reduce((n, i) => n + i.priceCents * i.travelers, 0)
+  const subtotalCents = items.reduce((n, i) => n + (i.lineTotalCents ?? i.priceCents * i.travelers), 0)
 
   return (
     <CartContext.Provider

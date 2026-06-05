@@ -17,6 +17,7 @@ import { getAdapter } from "@/lib/booking"
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const slug = searchParams.get("tour")
+  const date = searchParams.get("date")
   const days = Math.min(Number(searchParams.get("days") ?? 45), 90)
 
   if (!slug) {
@@ -34,9 +35,20 @@ export async function GET(req: Request) {
     return NextResponse.json({ provider: market?.provider ?? null, handoff: true, slots: [] })
   }
 
+  if (market.provider === "fareharbor" && market.id !== "alaska") {
+    return NextResponse.json({
+      provider: market.provider,
+      configured: false,
+      mapped: Boolean(tour.providerRef),
+      wtaOnly: true,
+      slots: [],
+      dates: [],
+    })
+  }
+
   const adapter = getAdapter(market.provider)
   const configured = adapter.isConfigured()
-  const mapped = Boolean(tour.providerRef)
+  const mapped = Boolean(tour.providerRef && tour.providerCompany)
 
   if (!configured || !mapped) {
     return NextResponse.json({
@@ -47,8 +59,10 @@ export async function GET(req: Request) {
     })
   }
 
-  const now = new Date()
-  const to = new Date(now.getTime() + days * 24 * 60 * 60 * 1000)
+  const now = date ? new Date(`${date}T00:00:00`) : new Date()
+  const to = date
+    ? new Date(`${date}T23:59:59`)
+    : new Date(now.getTime() + days * 24 * 60 * 60 * 1000)
   const slots = await adapter.getAvailability(
     tour.providerRef!,
     now.toISOString(),
@@ -57,7 +71,7 @@ export async function GET(req: Request) {
   )
 
   // Group slots by calendar date, marking sold-out windows honestly.
-  const byDate: Record<string, { id: string; label: string; startsAt: string; capacityRemaining: number; soldOut: boolean; priceCents: number }[]> =
+  const byDate: Record<string, { id: string; label: string; startsAt: string; capacityRemaining: number; soldOut: boolean; priceCents: number; customerTypeRates?: { id: string; label: string; totalCents: number; totalIncludingTaxCents?: number; capacityRemaining?: number; minimumPartySize?: number; maximumPartySize?: number }[] }[]> =
     {}
   for (const s of slots) {
     const date = s.startsAt.slice(0, 10)
@@ -69,6 +83,7 @@ export async function GET(req: Request) {
       capacityRemaining: s.capacityRemaining,
       soldOut: s.capacityRemaining <= 0,
       priceCents: s.priceCents,
+      customerTypeRates: s.customerTypeRates,
     })
   }
 

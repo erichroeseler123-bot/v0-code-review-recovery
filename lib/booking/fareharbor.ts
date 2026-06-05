@@ -121,6 +121,20 @@ function getFareHarborImageUrl(data: FareHarborItemDetails) {
   )
 }
 
+function labelForCustomerTypeRate(rate: FhCustomerTypeRate) {
+  const customerType = rate.customer_type
+  const customerPrototype = rate.customer_prototype
+  return (
+    customerType?.singular ||
+    customerType?.name ||
+    customerType?.plural ||
+    customerPrototype?.singular ||
+    customerPrototype?.name ||
+    customerPrototype?.plural ||
+    "Guest"
+  )
+}
+
 export const fareHarborAdapter: BookingProviderAdapter = {
   onSiteCheckout: true,
   isConfigured: isFareHarborConfigured,
@@ -186,6 +200,15 @@ export const fareHarborAdapter: BookingProviderAdapter = {
           a.customer_type_rates?.[0]?.total ??
           a.customer_prototypes?.[0]?.total ??
           0,
+        customerTypeRates: (a.customer_type_rates ?? []).map((rate) => ({
+          id: String(rate.pk),
+          label: labelForCustomerTypeRate(rate),
+          totalCents: rate.total ?? 0,
+          totalIncludingTaxCents: rate.total_including_tax,
+          capacityRemaining: rate.capacity,
+          minimumPartySize: rate.minimum_party_size,
+          maximumPartySize: rate.maximum_party_size,
+        })),
       }))
     } catch (err) {
       console.log("[v0] FareHarbor availability fetch failed:", (err as Error).message)
@@ -211,9 +234,11 @@ export const fareHarborAdapter: BookingProviderAdapter = {
             email: input.customer.email,
             phone: input.customer.phone ?? "",
           },
-          customers: Array.from({ length: input.travelers }).map(() => ({
-            customer_type_rate: null,
-          })),
+          customers: (input.customerTypeRates ?? []).flatMap((rate) =>
+            Array.from({ length: rate.quantity }).map(() => ({
+              customer_type_rate: Number(rate.id),
+            })),
+          ),
         }),
       })
       const data = (await res.json()) as { booking?: { pk: number; uuid: string } }
@@ -237,6 +262,25 @@ interface FhAvailability {
   pk: number
   start_at: string
   capacity?: number
-  customer_type_rates?: { total: number }[]
+  customer_type_rates?: FhCustomerTypeRate[]
   customer_prototypes?: { total: number }[]
+}
+
+interface FhCustomerTypeRate {
+  pk: number
+  total: number
+  total_including_tax?: number
+  capacity?: number
+  minimum_party_size?: number
+  maximum_party_size?: number
+  customer_type?: {
+    name?: string
+    singular?: string
+    plural?: string
+  }
+  customer_prototype?: {
+    name?: string
+    singular?: string
+    plural?: string
+  }
 }

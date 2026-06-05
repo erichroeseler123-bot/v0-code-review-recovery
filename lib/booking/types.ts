@@ -21,6 +21,19 @@ export interface AvailabilitySlot {
    * shows an "Available / Sold out" date chip instead of a clock time.
    */
   dateOnly?: boolean
+  /** FareHarbor ticket/customer type rates available for this exact slot. */
+  customerTypeRates?: CustomerTypeRate[]
+}
+
+export interface CustomerTypeRate {
+  /** Provider-specific customer type rate pk. Required for FareHarbor booking. */
+  id: string
+  label: string
+  totalCents: number
+  totalIncludingTaxCents?: number
+  capacityRemaining?: number
+  minimumPartySize?: number
+  maximumPartySize?: number
 }
 
 export interface BookingCustomer {
@@ -33,6 +46,7 @@ export interface CreateBookingInput {
   tourId: string
   availabilityId: string
   travelers: number
+  customerTypeRates?: { id: string; quantity: number }[]
   customer: BookingCustomer
 }
 
@@ -73,6 +87,10 @@ export interface CheckoutItem {
   /** ISO date (yyyy-mm-dd) the guest wants to travel */
   date: string
   travelers: number
+  /** WTA/FareHarbor selected availability. Required before checkout. */
+  availabilityId?: string
+  startsAt?: string
+  customerTypeRates?: { id: string; quantity: number }[]
 }
 
 /** The full checkout payload posted to /api/checkout. */

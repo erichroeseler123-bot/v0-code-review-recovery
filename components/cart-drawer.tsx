@@ -68,6 +68,7 @@ export function CartDrawer() {
                       <div>
                         <p className="text-sm font-medium leading-snug text-foreground">{item.title}</p>
                         <p className="text-xs text-muted-foreground">{item.port}</p>
+                        {item.dateLabel && <p className="text-xs text-muted-foreground">{item.dateLabel}</p>}
                       </div>
                       <button
                         type="button"
@@ -101,7 +102,7 @@ export function CartDrawer() {
                         </button>
                       </div>
                       <span className="text-sm font-medium text-foreground">
-                        {formatPrice(item.priceCents * item.travelers)}
+                        {formatPrice(item.lineTotalCents ?? item.priceCents * item.travelers)}
                       </span>
                     </div>
                   </div>

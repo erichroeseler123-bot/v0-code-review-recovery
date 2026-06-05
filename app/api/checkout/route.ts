@@ -4,6 +4,21 @@ import type { CheckoutRequest } from "@/lib/booking/types"
 import { getTour } from "@/lib/tours"
 import { getMarket } from "@/lib/markets"
 
+const APPROVED_WTA_FAREHARBOR_ITEMS = new Set([
+  "temscoair-juneau:214803",
+  "wingsairways:256881",
+  "dolphintours:2436",
+  "taquanair:560411",
+])
+
+function isApprovedWtaFareHarborTour(tour: { marketId: string; providerCompany?: string; providerRef?: string }) {
+  return (
+    tour.marketId === "alaska" &&
+    Boolean(tour.providerCompany && tour.providerRef) &&
+    APPROVED_WTA_FAREHARBOR_ITEMS.has(`${tour.providerCompany}:${tour.providerRef}`)
+  )
+}
+
 export async function POST(req: NextRequest) {
   let body: CheckoutRequest
   try {
@@ -59,6 +74,24 @@ export async function POST(req: NextRequest) {
       }
 
       const providerRef = tour.providerRef ?? ""
+      if (!providerRef) {
+        return NextResponse.json(
+          { ok: false, error: `${tour.title} is not mapped to a live booking product yet.` },
+          { status: 409 },
+        )
+      }
+
+      if (market.provider === "fareharbor" && !isApprovedWtaFareHarborTour(tour)) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: "FareHarbor API checkout is enabled only for approved Welcome to Alaska Tours products.",
+            code: "WTA_FAREHARBOR_ONLY",
+          },
+          { status: 403 },
+        )
+      }
+
       const dayStart = `${item.date}T00:00:00`
       const dayEnd = `${item.date}T23:59:59`
       const slots = await adapter.getAvailability(providerRef, dayStart, dayEnd, tour.providerCompany)
@@ -70,12 +103,67 @@ export async function POST(req: NextRequest) {
         )
       }
 
-      const slot = slots[0]
+      const selectedRates = (item.customerTypeRates ?? [])
+        .map((rate) => ({ id: String(rate.id), quantity: Number(rate.quantity) }))
+        .filter((rate) => rate.id && Number.isFinite(rate.quantity) && rate.quantity > 0)
+      const selectedTravelerCount = selectedRates.reduce((sum, rate) => sum + rate.quantity, 0)
+
+      if (market.provider === "fareharbor") {
+        if (!item.availabilityId || !item.startsAt) {
+          return NextResponse.json(
+            { ok: false, error: `Choose an available FareHarbor time for ${tour.title} before checkout.` },
+            { status: 400 },
+          )
+        }
+        if (!item.startsAt.startsWith(item.date)) {
+          return NextResponse.json(
+            { ok: false, error: "The selected FareHarbor time does not match the selected date." },
+            { status: 400 },
+          )
+        }
+        if (selectedTravelerCount < 1) {
+          return NextResponse.json(
+            { ok: false, error: `Choose at least one FareHarbor ticket type for ${tour.title}.` },
+            { status: 400 },
+          )
+        }
+
+        const selectedSlot = slots.find((slot) => slot.id === item.availabilityId)
+        if (!selectedSlot || selectedSlot.startsAt !== item.startsAt) {
+          return NextResponse.json(
+            { ok: false, error: "The selected FareHarbor time is no longer available. Please choose another time." },
+            { status: 409 },
+          )
+        }
+        if (selectedSlot.capacityRemaining < selectedTravelerCount) {
+          return NextResponse.json(
+            {
+              ok: false,
+              error: `Only ${selectedSlot.capacityRemaining} spaces remain for the selected FareHarbor time.`,
+            },
+            { status: 409 },
+          )
+        }
+
+        const availableRateIds = new Set((selectedSlot.customerTypeRates ?? []).map((rate) => rate.id))
+        const hasUnknownRate = selectedRates.some((rate) => !availableRateIds.has(rate.id))
+        if (hasUnknownRate || availableRateIds.size === 0) {
+          return NextResponse.json(
+            { ok: false, error: "The selected FareHarbor ticket type is no longer available." },
+            { status: 409 },
+          )
+        }
+      }
+
+      const slot = market.provider === "fareharbor"
+        ? slots.find((s) => s.id === item.availabilityId)!
+        : slots[0]
       const result = await adapter.createBooking(
         {
           tourId: providerRef,
           availabilityId: slot.id,
-          travelers: item.travelers,
+          travelers: market.provider === "fareharbor" ? selectedTravelerCount : item.travelers,
+          customerTypeRates: market.provider === "fareharbor" ? selectedRates : undefined,
           customer: body.contact,
         },
         tour.providerCompany,
