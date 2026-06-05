@@ -6,12 +6,13 @@ import { CalendarClock, Clock, ExternalLink, MapPin, Plus } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
 import type { Market } from "@/lib/markets"
 import { formatPrice, formatDuration, getDepartures, hasVerifiedProductImage, type Tour } from "@/lib/tours"
-import { bookingHref } from "@/lib/links"
+import { bookingHref, hasConnectedBookingUrl } from "@/lib/links"
 
 export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
   const { addItem } = useCart()
   const href = `/s/${market.id}/tours/${tour.slug}`
   const hasProductImage = hasVerifiedProductImage(tour)
+  const hasProductBookingUrl = hasConnectedBookingUrl(tour)
 
   function quickAdd(e: React.MouseEvent) {
     e.preventDefault()
@@ -103,7 +104,7 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
               <Plus className="h-4 w-4" />
               Add
             </button>
-          ) : (
+          ) : hasProductBookingUrl ? (
             <a
               href={bookingHref(tour, market)}
               target="_blank"
@@ -113,6 +114,13 @@ export function TourCard({ tour, market }: { tour: Tour; market: Market }) {
               Book
               <ExternalLink className="h-4 w-4" />
             </a>
+          ) : (
+            <Link
+              href={href}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Details
+            </Link>
           )}
         </div>
       </div>

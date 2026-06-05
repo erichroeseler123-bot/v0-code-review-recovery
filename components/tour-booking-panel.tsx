@@ -5,7 +5,7 @@ import { Check, ExternalLink, MessageSquare, Minus, Phone, Plus } from "lucide-r
 import { useCart } from "@/components/cart-provider"
 import type { Market } from "@/lib/markets"
 import { formatPrice, type Tour } from "@/lib/tours"
-import { bookingHref } from "@/lib/links"
+import { bookingHref, hasConnectedBookingUrl } from "@/lib/links"
 import { LiveAvailability } from "@/components/live-availability"
 import { GoSnoRezdyBooking } from "@/components/gosno-rezdy-booking"
 import { SomersetRezdyBooking } from "@/components/somerset-rezdy-booking"
@@ -145,6 +145,7 @@ export function TourBookingPanel({ tour, market }: { tour: Tour; market: Market 
   // Handoff providers: book on the partner's site.
   if (!market.onSiteCheckout) {
     const label = PROVIDER_LABEL[market.provider] ?? "our partner"
+    const hasProductLink = hasConnectedBookingUrl(tour)
     return (
       <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
         <div>
@@ -154,18 +155,30 @@ export function TourBookingPanel({ tour, market }: { tour: Tour; market: Market 
           </p>
           <span className="text-xs text-muted-foreground">per traveler</span>
         </div>
-        <a
-          href={bookingHref(tour, market)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-5 flex w-full items-center justify-center gap-1.5 rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          Book on {label}
-          <ExternalLink className="h-4 w-4" />
-        </a>
-        <p className="mt-3 text-center text-xs text-muted-foreground">
-          Availability, dates, and payment are handled securely by {label}.
-        </p>
+        {hasProductLink ? (
+          <>
+            <a
+              href={bookingHref(tour, market)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 flex w-full items-center justify-center gap-1.5 rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Book on {label}
+              <ExternalLink className="h-4 w-4" />
+            </a>
+            <p className="mt-3 text-center text-xs text-muted-foreground">
+              Availability, dates, and payment are handled securely by {label}.
+            </p>
+          </>
+        ) : (
+          <div className="mt-5 rounded-md border border-dashed border-border bg-secondary/40 p-4 text-sm text-muted-foreground">
+            <p className="font-medium text-foreground">Product link not connected yet</p>
+            <p className="mt-1">
+              This product needs its exact {label} product URL before online booking can be
+              linked from this page.
+            </p>
+          </div>
+        )}
       </div>
     )
   }
