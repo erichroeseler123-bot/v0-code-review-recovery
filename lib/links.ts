@@ -37,3 +37,24 @@ export function bookingHref(tour: Tour, market: Market): string {
     return base
   }
 }
+
+export function isGenericProviderHomepage(url: string | undefined): boolean {
+  if (!url) return false
+
+  try {
+    const parsed = new URL(url)
+    const hostname = parsed.hostname.replace(/^www\./, "").toLowerCase()
+    const pathname = parsed.pathname.replace(/\/+$/, "")
+    const isProvider =
+      hostname === "viator.com" ||
+      hostname === "getyourguide.com"
+
+    return isProvider && pathname === ""
+  } catch {
+    return false
+  }
+}
+
+export function hasConnectedBookingUrl(tour: Tour): boolean {
+  return Boolean(tour.bookingUrl && !isGenericProviderHomepage(tour.bookingUrl))
+}
