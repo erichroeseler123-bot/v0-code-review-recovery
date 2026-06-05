@@ -73,6 +73,9 @@ export interface CheckoutItem {
   /** ISO date (yyyy-mm-dd) the guest wants to travel */
   date: string
   travelers: number
+  /** Provider-specific availability/time selected before checkout. Required for FareHarbor. */
+  availabilityId?: string
+  startsAt?: string
 }
 
 /** The full checkout payload posted to /api/checkout. */

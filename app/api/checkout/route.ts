@@ -59,22 +59,66 @@ export async function POST(req: NextRequest) {
       }
 
       const providerRef = tour.providerRef ?? ""
-      const dayStart = `${item.date}T00:00:00`
-      const dayEnd = `${item.date}T23:59:59`
-      const slots = await adapter.getAvailability(providerRef, dayStart, dayEnd, tour.providerCompany)
-
-      if (slots.length === 0) {
+      if (!providerRef) {
         return NextResponse.json(
-          { ok: false, error: `No availability for ${item.date}. Please pick another date.` },
-          { status: 409 },
+          { ok: false, error: `${tour.title} is not mapped to a live ${market.provider} item.` },
+          { status: 400 },
+        )
+      }
+      if (!item.date) {
+        return NextResponse.json(
+          { ok: false, error: `Choose a date for ${tour.title} before checkout.` },
+          { status: 400 },
         )
       }
 
-      const slot = slots[0]
+      const dayStart = `${item.date}T00:00:00`
+      const dayEnd = `${item.date}T23:59:59`
+      let availabilityId = item.availabilityId
+
+      if (market.provider === "fareharbor") {
+        if (!item.availabilityId || !item.startsAt) {
+          return NextResponse.json(
+            { ok: false, error: `Choose an available FareHarbor time for ${tour.title} before checkout.` },
+            { status: 400 },
+          )
+        }
+        if (!item.startsAt.startsWith(item.date)) {
+          return NextResponse.json(
+            { ok: false, error: `The selected FareHarbor time does not match the selected date.` },
+            { status: 400 },
+          )
+        }
+
+        const slots = await adapter.getAvailability(providerRef, dayStart, dayEnd, tour.providerCompany)
+        const selectedSlot = slots.find((slot) => slot.id === item.availabilityId)
+        if (!selectedSlot) {
+          return NextResponse.json(
+            { ok: false, error: `The selected FareHarbor time is no longer available. Please choose another time.` },
+            { status: 409 },
+          )
+        }
+        if (selectedSlot.capacityRemaining < item.travelers) {
+          return NextResponse.json(
+            { ok: false, error: `Only ${selectedSlot.capacityRemaining} spaces remain for the selected FareHarbor time.` },
+            { status: 409 },
+          )
+        }
+      } else {
+        const slots = await adapter.getAvailability(providerRef, dayStart, dayEnd, tour.providerCompany)
+        if (slots.length === 0) {
+          return NextResponse.json(
+            { ok: false, error: `No availability for ${item.date}. Please pick another date.` },
+            { status: 409 },
+          )
+        }
+        availabilityId = slots[0].id
+      }
+
       const result = await adapter.createBooking(
         {
           tourId: providerRef,
-          availabilityId: slot.id,
+          availabilityId: availabilityId!,
           travelers: item.travelers,
           customer: body.contact,
         },

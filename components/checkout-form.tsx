@@ -22,6 +22,7 @@ export function CheckoutForm({ market }: { market: Market }) {
   const [error, setError] = useState<string | null>(null)
 
   const today = new Date().toISOString().slice(0, 10)
+  const hasItemsMissingSelectedDate = items.some((item) => !item.selectedDate)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -34,8 +35,10 @@ export function CheckoutForm({ market }: { market: Market }) {
         body: JSON.stringify({
           items: items.map((i) => ({
             tourSlug: i.tourSlug,
-            date,
+            date: i.selectedDate ?? date,
             travelers: i.travelers,
+            availabilityId: i.availabilityId,
+            startsAt: i.startsAt,
           })),
           contact,
         }),
@@ -69,21 +72,32 @@ export function CheckoutForm({ market }: { market: Market }) {
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
       <form onSubmit={handleSubmit} className="order-2 lg:order-1">
-        <h2 className="font-serif text-xl font-semibold">Trip date</h2>
-        <div className="mt-4 grid gap-1.5">
-          <Label htmlFor="date">Which day are you in port?</Label>
-          <Input
-            id="date"
-            type="date"
-            required
-            min={today}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-          <p className="text-xs text-muted-foreground">
-            We&apos;ll confirm the exact departure time for each tour by email.
-          </p>
-        </div>
+        {hasItemsMissingSelectedDate ? (
+          <>
+            <h2 className="font-serif text-xl font-semibold">Trip date</h2>
+            <div className="mt-4 grid gap-1.5">
+              <Label htmlFor="date">Which day are you in port?</Label>
+              <Input
+                id="date"
+                type="date"
+                required
+                min={today}
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                We&apos;ll confirm the exact departure time for each tour by email.
+              </p>
+            </div>
+          </>
+        ) : (
+          <div className="rounded-lg border border-border bg-secondary/30 p-4">
+            <h2 className="font-serif text-xl font-semibold">Selected FareHarbor time</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Your chosen date and departure time are attached to the order.
+            </p>
+          </div>
+        )}
 
         <h2 className="mt-8 font-serif text-xl font-semibold">Lead guest details</h2>
         <div className="mt-4 grid gap-4">
@@ -154,6 +168,9 @@ export function CheckoutForm({ market }: { market: Market }) {
                     {item.port} &middot; {item.travelers}{" "}
                     {item.travelers === 1 ? "traveler" : "travelers"}
                   </p>
+                  {item.dateLabel ? (
+                    <p className="text-xs font-medium text-primary">{item.dateLabel}</p>
+                  ) : null}
                 </div>
                 <span className="text-sm font-medium">
                   {formatPrice(item.priceCents * item.travelers)}

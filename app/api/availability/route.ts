@@ -17,6 +17,7 @@ import { getAdapter } from "@/lib/booking"
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const slug = searchParams.get("tour")
+  const date = searchParams.get("date")
   const days = Math.min(Number(searchParams.get("days") ?? 45), 90)
 
   if (!slug) {
@@ -48,10 +49,11 @@ export async function GET(req: Request) {
   }
 
   const now = new Date()
-  const to = new Date(now.getTime() + days * 24 * 60 * 60 * 1000)
+  const from = date ? new Date(`${date}T00:00:00`) : now
+  const to = date ? new Date(`${date}T23:59:59`) : new Date(now.getTime() + days * 24 * 60 * 60 * 1000)
   const slots = await adapter.getAvailability(
     tour.providerRef!,
-    now.toISOString(),
+    from.toISOString(),
     to.toISOString(),
     tour.providerCompany,
   )

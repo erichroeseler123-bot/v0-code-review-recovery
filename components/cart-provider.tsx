@@ -12,8 +12,10 @@ export interface CartItem {
   port: string
   priceCents: number
   travelers: number
-  /** Selected availability, set at checkout time */
+  /** Selected provider availability/time. Required for FareHarbor checkout. */
   availabilityId?: string
+  selectedDate?: string
+  startsAt?: string
   dateLabel?: string
 }
 
@@ -58,7 +60,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = useCallback((item: CartItem) => {
     setItems((prev) => {
-      const existing = prev.find((i) => i.tourSlug === item.tourSlug)
+      const existing = prev.find((i) =>
+        i.tourSlug === item.tourSlug &&
+        i.availabilityId === item.availabilityId &&
+        i.selectedDate === item.selectedDate
+      )
       if (existing) {
         return prev.map((i) =>
           i.tourSlug === item.tourSlug
