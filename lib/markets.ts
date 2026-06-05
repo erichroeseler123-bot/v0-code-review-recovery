@@ -11,8 +11,8 @@
  *  - "viator"       : affiliate handoff (Viator takes payment)
  *  - "getyourguide" : affiliate handoff (GetYourGuide takes payment)
  *  - "partner"      : tracked handoff to a sibling site we own that runs the
- *                     conversion/checkout (e.g. Somerset → shuttle site). DCC
- *                     owns the decision/guide pages; the partner site converts.
+ *                     conversion/checkout. DCC owns the decision/guide pages;
+ *                     the partner site converts.
  */
 
 export type BookingProvider = "fareharbor" | "custom" | "viator" | "getyourguide" | "partner"
@@ -211,27 +211,25 @@ export const MARKETS: Record<string, Market> = {
   },
   somerset: {
     id: "somerset",
-    name: "St. Croix Valley Guide",
-    brand: "St. Croix Valley",
-    // Intentionally empty: Somerset is a network-internal decision/guide layer.
-    // The shuttle conversion site (shuttletosomersetamphitheater.com) stays SEPARATE
-    // per doctrine — DCC owns the guide pages, the shuttle site converts.
-    domain: "",
+    name: "Private Somerset Amphitheater Transportation",
+    brand: "Somerset Amphitheater",
+    domain: "shuttletosomersetamphitheater.com",
     provider: "partner",
     onSiteCheckout: false,
-    region: "St. Croix Valley, WI/MN",
-    tagline: "Plan your night in the St. Croix Valley — Somerset, Hudson & Stillwater",
-    scope: "What should I do in the St. Croix Valley, and how do I get to the show?",
-    ports: ["Somerset", "Hudson", "Stillwater", "Apple River"],
+    region: "Somerset, Wisconsin",
+    tagline: "Private Somerset Amphitheater transportation",
+    scope:
+      "Book a private Suburban to Somerset Amphitheater for $399. Date, time, payment, and confirmation are handled by Rezdy.",
+    ports: ["Somerset Amphitheater"],
     coords: { lat: 45.1247, lng: -92.6754 },
-    heroImage: "/markets/somerset.png",
+    heroImage: "",
     accentHue: 150,
-    status: "building",
+    status: "live",
     trust: [
-      { label: "Local-first picks", note: "Real valley spots, not filler" },
-      { label: "Show-night ready", note: "Plan the venue run end to end" },
-      { label: "Tracked handoff", note: "Sends you to the right booking site" },
-      { label: "Group-friendly", note: "Built for crews and trips" },
+      { label: "Private pickup", note: "Your group, your vehicle" },
+      { label: "Suburban service", note: "$399 private ride" },
+      { label: "Show-night ready", note: "Pickup and return after the show" },
+      { label: "Rezdy booking", note: "Rezdy handles payment and confirmation" },
     ],
   },
 }

@@ -8,6 +8,7 @@ import { formatPrice, type Tour } from "@/lib/tours"
 import { bookingHref } from "@/lib/links"
 import { LiveAvailability } from "@/components/live-availability"
 import { GoSnoRezdyBooking } from "@/components/gosno-rezdy-booking"
+import { SomersetRezdyBooking } from "@/components/somerset-rezdy-booking"
 
 const GOSNO_PHONE = "720-369-6292"
 const GOSNO_SMS = "7203696292"
@@ -96,6 +97,47 @@ export function TourBookingPanel({ tour, market }: { tour: Tour; market: Market 
             <GoSnoRezdyBooking />
           </div>
         )}
+      </div>
+    )
+  }
+
+  if (market.id === "somerset") {
+    return (
+      <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+        <div className="flex items-baseline justify-between gap-4">
+          <div>
+            <span className="text-sm text-muted-foreground">Private Suburban</span>
+            <p className="font-serif text-3xl font-semibold text-foreground">
+              {formatPrice(tour.priceFromCents)}
+            </p>
+            <span className="text-xs text-muted-foreground">booking handled by Rezdy</span>
+          </div>
+          <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
+            Rezdy booking
+          </span>
+        </div>
+
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+          Book online through Rezdy. Choose your date/time and complete payment in the secure
+          Rezdy booking widget.
+        </p>
+
+        <div className="mt-5">
+          <a
+            href="#somerset-rezdy-booking"
+            className="flex w-full items-center justify-center rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Book Online
+          </a>
+        </div>
+
+        <p className="mt-3 text-center text-xs text-muted-foreground">
+          Rezdy handles date/time selection, payment, and confirmation.
+        </p>
+
+        <div id="somerset-rezdy-booking" className="mt-5 border-t border-border pt-5">
+          <SomersetRezdyBooking />
+        </div>
       </div>
     )
   }

@@ -16,8 +16,8 @@ export default async function CheckoutPage({
   const market = getMarket(marketId)
   if (!market) notFound()
 
-  if (market.id === "gosno") {
-    redirect("/s/gosno")
+  if (market.id === "gosno" || market.id === "somerset") {
+    redirect(`/s/${market.id}`)
   }
 
   return (

@@ -21,10 +21,6 @@ const PORT_IMAGES: Record<string, string> = {
   Aspen: "/gosno/aspen.jpg",
   "Steamboat Springs": "/gosno/steamboat-springs.jpg",
   "Beaver Creek": "/gosno/beaver-creek.jpg",
-  Somerset: "/somerset/amphitheater-shuttle.png",
-  "Apple River": "/somerset/apple-river-tubing.png",
-  Stillwater: "/somerset/stillwater-riverfront.png",
-  Hudson: "/markets/somerset.png",
 }
 
 export function PortsSection({ market, tours }: { market: Market; tours: Tour[] }) {
