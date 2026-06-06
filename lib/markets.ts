@@ -219,7 +219,7 @@ export const MARKETS: Record<string, Market> = {
     region: "Somerset, Wisconsin",
     tagline: "New to Somerset. Proven at Red Rocks.",
     scope:
-      "Somerset VIP Shuttle is a new western Wisconsin service built by the team behind an established Red Rocks transportation operation in Colorado. Book a private Suburban to Somerset Amphitheater for $399. Questions about Somerset VIP Shuttle? Text 612-564-6025.",
+      "Private Somerset Amphitheater transportation from the team behind an established Red Rocks shuttle operation. $399 private ride. Questions? Text 612-564-6025.",
     ports: ["Somerset Amphitheater"],
     coords: { lat: 45.1247, lng: -92.6754 },
     heroImage: "",

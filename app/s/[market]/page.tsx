@@ -16,6 +16,28 @@ export async function generateMetadata({
   const { market: marketId } = await params
   const market = getMarket(marketId)
   if (!market) return {}
+  if (market.id === "somerset") {
+    const title = "Somerset VIP Shuttle | Private Somerset Amphitheater Ride + Tailgate"
+    const description =
+      "Private Somerset Amphitheater transportation from the team behind an established Red Rocks shuttle operation. $399 private ride. Questions? Text 612-564-6025."
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: "https://shuttletosomersetamphitheater.com",
+        siteName: "Somerset VIP Shuttle",
+        type: "website",
+      },
+      twitter: {
+        card: "summary",
+        title,
+        description,
+      },
+    }
+  }
   return {
     title: `${market.name} | ${market.tagline}`,
     description: market.scope,
