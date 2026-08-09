@@ -3,31 +3,49 @@ import { getMarketIdForHost } from "@/lib/markets"
 
 /**
  * HOSTNAME ROUTING — the network's front door.
- * --------------------------------------------
- * Each brand domain (welcometoalaskatours.com, welcometotheswamp.com, etc.)
- * is mapped to a market in lib/markets.ts. This middleware looks at the
- * incoming Host header and rewrites the request so the right storefront
- * renders WITHOUT changing the URL in the visitor's address bar.
  *
- *   welcometotheswamp.com/        ->  renders /s/new-orleans
- *   juneauflightdeck.com/         ->  renders /s/juneau-flight-deck
+ * Brand domains render their own storefront at `/s/[market]` while keeping the
+ * public brand hostname in the address bar.
  *
- * Hosts that aren't mapped (v0 preview, *.vercel.app, localhost) fall through
- * to the default behavior: "/" redirects to the flagship (/s/alaska).
- *
- * Deep links (/s/..., /api/..., assets) are never touched, so a mapped domain
- * can still serve its own sub-pages normally.
+ * ShuttleYa is intentionally kept very small: its public brand surface is the
+ * storefront plus the Argo booking path. Shared DCC pages must never leak onto
+ * shuttleya.com, because that creates brand/SEO contamination under the direct
+ * service domain.
  */
+const SHUTTLEYA_ALLOWED_PATHS = new Set([
+  "/",
+  "/book/argo-shuttle",
+])
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const host = request.headers.get("host")
   const marketId = getMarketIdForHost(host)
 
-  // Only act on a mapped brand domain hitting the site root.
-  if (marketId && (pathname === "/" || pathname === "")) {
+  if (!marketId) {
+    return NextResponse.next()
+  }
+
+  if (marketId === "shuttleya") {
+    if (pathname === "/" || pathname === "") {
+      const url = request.nextUrl.clone()
+      url.pathname = "/s/shuttleya"
+      return NextResponse.rewrite(url)
+    }
+
+    if (!SHUTTLEYA_ALLOWED_PATHS.has(pathname)) {
+      const url = request.nextUrl.clone()
+      url.pathname = "/"
+      url.search = ""
+      return NextResponse.redirect(url, 308)
+    }
+
+    return NextResponse.next()
+  }
+
+  if (pathname === "/" || pathname === "") {
     const url = request.nextUrl.clone()
     url.pathname = `/s/${marketId}`
-    // Rewrite (not redirect) so the brand domain stays in the address bar.
     return NextResponse.rewrite(url)
   }
 
@@ -35,6 +53,6 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Run on real pages only — skip Next internals, API routes, and static assets.
+  // API, Next internals, favicons, robots/sitemaps and static assets bypass this.
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 }
